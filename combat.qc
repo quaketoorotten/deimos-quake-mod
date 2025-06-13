@@ -83,11 +83,8 @@ void(entity targ, entity attacker) Killed =
 
 	monster_death_use();
 	targ.th_die ();
-	if (targ.mass > 0 && (targ.flags & FL_MONSTER))
-	{
-		targ.velocity = '0 0 0';
+	if (targ.mass > 0)
 		targ.mass = 0;
-	}
 };
 
 void M_React (entity attacker, entity targ) // q2 port

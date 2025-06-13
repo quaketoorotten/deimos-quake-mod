@@ -369,7 +369,7 @@ void() sham_magic5     =[      52,       sham_magic6    ] {ai_charge(3);};
 void() sham_magic6     =[      53,       sham_magic7    ] {ai_charge(6);CastMagic();};																	
 void() sham_magic7     =[      54,       sham_magic8    ] {ai_charge(6);};
 void() sham_magic8     =[      55,       sham_magic9    ] {ai_charge(3);};
-void() sham_magic9     =[      56,       sham_run1      ] {ai_charge(1); SUB_AttackFinishedSpecial (self,  1 + 2*random() );};
+void() sham_magic9     =[      56,       sham_run1      ] {ai_charge(1); SUB_AttackFinishedSpecial (self, 1 + 2*random() );};
 
 void(vector to) ring =
 {
@@ -426,7 +426,7 @@ void() sham_smash7     =[      41,       sham_smash8    ] { ai_charge(3);};
 void() sham_smash8     =[      42,       sham_smash9    ] { ai_charge(5);};
 void() sham_smash9     =[      43,       sham_smash10   ] { ai_charge(6);};
 void() sham_smash10    =[      44,       sham_smash11   ] { ai_charge(2); ShamSmash ();};
-void() sham_smash11    =[      45,       sham_run1   ] { self.effects = 0; SUB_AttackFinishedSpecial (self,  1 + 0.5*random() );};
+void() sham_smash11    =[      45,       sham_run1   ] { self.effects = 0; SUB_AttackFinishedSpecial (self, 1 + 0.5*random() );};
 
 
 void() sham_ranged = 
@@ -489,13 +489,6 @@ void(entity attacker, float damage)	sham_pain =
 
 //============================================================================
 
-void() sham_dead = 
-{	
-	InitCorpse ();
-	setsize (self, VEC_HULL2_MIN, '42 42 8');
-	self.nextthink = -1;
-};
-
 void() sham_death1      =[      64,       sham_death2     ] {};
 void() sham_death2      =[      65,       sham_death3     ] {};
 void() sham_death3      =[      66,       sham_death4     ] {ai_back(8);};
@@ -504,13 +497,15 @@ void() sham_death5      =[      68, 	sham_death6     ] {ai_back(20);};
 void() sham_death6      =[      69,       sham_death7     ] {ai_back(15);};
 void() sham_death7      =[      70,       sham_death8     ] {};
 void() sham_death8      =[      71,       sham_death9     ] {};
-void() sham_death9      =[      72,       sham_dead     ] {};
+void() sham_death9      =[      72,       sham_death9     ] {
+	self.solid = SOLID_NOT; 
+};
 
 
 void() sham_die =
 {
 // check for gib
-	if ( self.health < -800 )
+	if ( self.health < -300 )
 	{
 		self.effects = 0; self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
@@ -520,6 +515,7 @@ void() sham_die =
 		ThrowGib ("progs/gib2_green.mdl", self.health);
 		//for(float i = 0; i < 8; i++)
 			ThrowGib ("progs/gib3_green.mdl", self.health);
+		remove(self);
 		return;
 	}
 	
@@ -530,6 +526,8 @@ void() sham_die =
 // regular death
 	sound (self, CHAN_VOICE, "shambler/sdeath.wav", 1, ATTN_NORM);
 	self.effects = 0;
+	self.takedamage = DAMAGE_YES;
+	self.movetype = MOVETYPE_TOSS;
 	self.skin = 1;
 	sham_death1 ();
 	self.deadflag = DEAD_DEAD;

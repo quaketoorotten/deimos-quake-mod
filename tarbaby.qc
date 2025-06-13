@@ -49,7 +49,7 @@ void() CheckContinueCharge2 =
 	{
 		self.angles = '0 0 0';
 		self.movetype = MOVETYPE_STEP;	
-		SUB_AttackFinishedSpecial (self,2 + 2*random());
+		SUB_AttackFinishedSpecial (self, 2 + 2*random());
 		tbaby_run1 ();
 		return;	
 	}

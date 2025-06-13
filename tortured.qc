@@ -143,27 +143,20 @@ void () zombie_touch =
                 other.flags = other.flags + FL_ONGROUND;
 };
 
-void()	tort_dead =
-{
-	self.maxs_z -= 48;
-	InitCorpse();
-	self.nextthink = -1;
-}
-
 void()	tort_die1	=[	33,	tort_die2	] { };
 void()	tort_die2	=[	34,	tort_die3	] { };
 void()	tort_die3	=[	35,	tort_die4	] { };
-void()	tort_die4	=[	36,	tort_dead	] { };
+void()	tort_die4	=[	36,	tort_die4	] { };
 
 void()	tort_dieb1	=[	29,	tort_dieb2	] { };
 void()	tort_dieb2	=[	30,	tort_dieb3	] { };
 void()	tort_dieb3	=[	31,	tort_dieb4	] { };
-void()	tort_dieb4	=[	32,	tort_dead	] { };
+void()	tort_dieb4	=[	32,	tort_dieb4	] { };
 
 void() tort_die =
 {	
 // check for gib
-	if (self.health < -100)
+	if (self.health < -50)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 
@@ -172,6 +165,7 @@ void() tort_die =
 		ThrowGib ("progs/gib3.mdl", -20);
 		ThrowHead ("progs/h_tort.mdl", -20);
 
+		remove(self);
 		return;
 	}
 	
@@ -188,7 +182,8 @@ void() tort_die =
 		
 	DeathSound();
 		
-	//self.touch = zombie_touch;
+	self.maxs_z -= 48;
+	self.touch = zombie_touch;
 	if (self.frame < 19)
 		tort_die1 ();
 	else
@@ -318,8 +313,8 @@ void() monster_tortured =
 	setmodel (self, "progs/tortplayer.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 24');
-	self.health = 80;
-	self.max_health = 80;
+	self.health = 100;
+	self.max_health = 100;
 	self.mass = 500;
 	self.startframe = mod(random()*100, 18);
 	self.frame = ceil(self.startframe);

@@ -42,7 +42,7 @@ float() EnforcerCheckAttack =
 		if (CanDamage (self.enemy, self))
 		{
 			self.attack_state = AS_MELEE;
-			SUB_AttackFinishedSpecial (self,2*random());
+			SUB_AttackFinishedSpecial (self, 2*random());
 			return TRUE;
 		}
 	}
@@ -68,7 +68,7 @@ float() EnforcerCheckAttack =
 	if (random () < chance)
 	{
 		self.th_missile ();
-		SUB_AttackFinished (self,1 + random());
+		SUB_AttackFinished (self, 1 + random());
 		if (random() < 0.3)
 			self.lefty = !self.lefty;
 
@@ -78,7 +78,7 @@ float() EnforcerCheckAttack =
 	// missile attack
 		
 	self.attack_state = AS_MISSILE;
-	SUB_AttackFinished (self,1+2*random() );
+	SUB_AttackFinished (self, 1+2*random() );
 	return TRUE;
 };
 
@@ -220,7 +220,7 @@ if ( vlen (self.origin - self.enemy.origin) < 60)
 		return;		// use regular attack
 
 // charge		
-	SUB_AttackFinished (self,3);
+	SUB_AttackFinished (self, 3);
 	enf_runatk1 ();
 
 };
@@ -274,13 +274,6 @@ void(entity attacker, float damage)	enf_pain =
 
 //============================================================================
 
-void() enf_dead = 
-{	
-	InitCorpse ();
-	setsize (self, '-16 -16 -24', '16 16 -8');	
-	self.nextthink = -1;
-};
-
 void()	enf_fdie1	=[	43,	enf_fdie2	] {};
 void()	enf_fdie2	=[	44,	enf_fdie3	] {};
 void()	enf_fdie3	=[	45,	enf_fdie4	] {};
@@ -292,7 +285,9 @@ void()	enf_fdie8	=[	50,	enf_fdie9	] {ai_forward(5);};
 void()	enf_fdie9	=[	51,	enf_fdie10	] {};
 void()	enf_fdie10	=[	52,	enf_fdie11	] {ai_forward(10);};
 void()	enf_fdie11	=[	53,	enf_fdie12	] {ai_forward(5);};
-void()	enf_fdie12	=[	54,	enf_dead	] {};
+void()	enf_fdie12	=[	54,	enf_fdie12	] {	
+	self.solid = SOLID_NOT; 
+};
 
 void() enf_die =
 {
@@ -304,7 +299,7 @@ void() enf_die =
 	}
 
 // check for gib
-	if (self.health < -100)
+	if (self.health < -40)
 	{
 		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
@@ -313,6 +308,7 @@ void() enf_die =
 			ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		remove(self);
 		return;
 	}
 	

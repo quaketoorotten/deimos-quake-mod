@@ -42,54 +42,6 @@ void() InitTrigger =
 	self.model = "";
 };
 
-void SpawnBlood(vector org, vector v, float col, float dmg);
-
-void(entity e) corpsetoucherboom =
-{
-	local entity olself;
-	olself = self;
-	self = e;
-	self.missile_explode();
-	self = olself;
-};
-
-void() corpse_detect =
-{	
-	local float damage;
-
-	if(!(other.flags & FL_DEADMONSTER))
-		return;
-	if((other.flags & FL_MONSTER))
-		return;
-	
-	if(other.dmg)
-		damage = other.dmg;
-	else
-		damage = 0;
-		
-	T_Damage(self, other, other.owner, damage, 0);
-	if(!self.color)
-		SpawnBlood (self.origin, '0 0 80' , 73, damage*1.25);
-	else
-		SpawnBlood (self.origin, '0 0 80' , self.color, damage*1.25);
-	
-	if(other.missile_explode)
-		corpsetoucherboom(other);
-	else
-		remove(other);
-};
-
-void() InitCorpse =
-{	
-	self.flags |= FL_DEADMONSTER;
-	self.solid = SOLID_TRIGGER;
-	setorigin (self, self.origin);	// link into world
-	self.touch = corpse_detect;
-	self.movetype = MOVETYPE_NONE; // so that the bfg won't target it, saving edict space
-	self.velocity = '0 0 0';
-	self.mass = 0;
-};
-
 /*
 =============
 SUB_CalcMove
@@ -471,4 +423,60 @@ void(vector start, vector pos) line2 =
 	WriteCoord(MSG_BROADCAST, pos_y);
 	WriteCoord(MSG_BROADCAST, pos_z);
 }
+
+// don't bother
+float (entity targ, vector end) thing =
+{
+	local vector size, org;
+
+	size = (targ.maxs - targ.mins) * 0.5;
+	size += targ.absmin;
+	org += targ.absmin;
+		
+	makevectors(targ.angles); 
+	
+	org[0] = org[0] + v_forward[0] * size[0];
+	org[1] = org[1] + v_right[1] * size[1];
+	org[2] = org[2] + v_up[2] * size[2];
+
+	traceline (org, end, 0, self);
+	if(trace_fraction < 1)
+		return FALSE;
+
+	org[0] = org[0] + v_forward[0] * size[0];
+	org[1] = org[1] + v_right[1] * -size[1];
+	org[2] = org[2] + v_up[2] * size[2];
+
+	traceline (org, end, 0, self);
+	if(trace_fraction < 1)
+		return FALSE;
+
+	org[0] = org[0] + v_forward[0] * size[0];
+	org[1] = org[1] + v_right[1] * -size[1];
+	org[2] = org[2] + v_up[2] * -size[2];
+
+	traceline (org, end, 0, self);
+	if(trace_fraction < 1)
+		return FALSE;
+
+	org[0] = org[0] + v_forward[0] * size[0];
+	org[1] = org[1] + v_right[1] * size[1];
+	org[2] = org[2] + v_up[2] * -size[2];
+
+	traceline (org, end, 0, self);
+	if(trace_fraction < 1)
+		return FALSE;
+
+	traceline (size, end, 0, self);
+	if(trace_fraction < 1)
+		return FALSE;
+
+	return TRUE;
+}			
+	
+
+
+
+
+
 

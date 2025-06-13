@@ -310,16 +310,11 @@ void(entity attacker, float damage)	ogre_pain =
 
 };
 
-void() ogre_dead = 
-{	
-	InitCorpse ();
-	setsize (self, VEC_HULL3_MIN, '32 32 -8');
-	self.nextthink = -1;
-};
-
 void()	ogre_die1	=[	63,	ogre_die2	] {};
 void()	ogre_die2	=[	64,	ogre_die3	] {};
-void()	ogre_die3	=[	65,	ogre_die4	] {};
+void()	ogre_die3	=[	65,	ogre_die4	]
+{
+};
 void()	ogre_die4	=[	66,	ogre_die5	] {};
 void()	ogre_die5	=[	67,	ogre_die6	] {};
 void()	ogre_die6	=[	68,	ogre_die7	] {};
@@ -327,7 +322,9 @@ void()	ogre_die7	=[	69,	ogre_die8	] {};
 void()	ogre_die8	=[	70,	ogre_die9	] {};
 void()	ogre_die9	=[	71,	ogre_die10	] {};
 void()	ogre_die10	=[	72,	ogre_die11	] {};
-void()	ogre_die11	=[	73,	ogre_dead	] {};
+void()	ogre_die11	=[	73,	ogre_die11	] { 
+	self.solid = SOLID_NOT; 
+};
 
 void()	ogre_bdie1	=[	74,	ogre_bdie2	] {};
 void()	ogre_bdie2	=[	75,	ogre_bdie3	] {ai_forward(5);};
@@ -338,15 +335,16 @@ void()	ogre_bdie6	=[	79,	ogre_bdie7	] {ai_forward(7);};
 void()	ogre_bdie7	=[	80,	ogre_bdie8	] {ai_forward(25);};
 void()	ogre_bdie8	=[	81,	ogre_bdie9	] {};
 void()	ogre_bdie9	=[	82,	ogre_bdie10	] {};
-void()	ogre_bdie10	=[	83,	ogre_dead	] {};
-
+void()	ogre_bdie10	=[	83,	ogre_bdie10	] {
+	self.solid = SOLID_NOT; 
+};
 
 void()	ogre_duckdown1	=[	85,	ogre_duckdown2	] 
 {
 	if(random() < 0.4)
 		OgreFireGrenade(); 
 	
-	self.nextthink = self.dspeed; 
+	 self.nextthink = self.dspeed; 
 	self.maxs_z -= 60; 
 	self.takedamage = DAMAGE_YES;
 };
@@ -377,7 +375,7 @@ void() ogre_die =
 	}
 	
 // check for gib
-	if (self.health < -120)
+	if (self.health < -40)
 	{
 		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM); 
@@ -387,6 +385,8 @@ void() ogre_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		//for(float i = 0; i < 3; i++)
 			ThrowGib ("progs/gib3.mdl", self.health);
+
+		remove(self);
 		return;
 	}
 	
@@ -396,6 +396,8 @@ void() ogre_die =
 
 // regular death
 	sound (self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
+	self.movetype = MOVETYPE_TOSS;
+	self.takedamage = DAMAGE_YES;
 	self.skin = 1;
 
 	if (random() < 0.5)
@@ -404,6 +406,7 @@ void() ogre_die =
 		ogre_bdie1 ();
 
 	self.deadflag = DEAD_DEAD;
+
 };
 
 /*QUAKED monster_ogre (1 0 0) (-32 -32 -24) (32 32 64) Ambush // self.max_z -= 88;

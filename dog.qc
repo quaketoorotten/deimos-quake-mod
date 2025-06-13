@@ -212,13 +212,6 @@ void(entity attacker, float damage) dog_pain =
 		dog_painb1 ();
 };
 
-void() dog_dead = 
-{	
-	InitCorpse ();
-	setsize (self, '-16 -16 -24', '16 16 -8');
-	self.nextthink = -1;
-};
-
 void() dog_die1		=[	$death1,	dog_die2	] {};
 void() dog_die2		=[	$death2,	dog_die3	] {};
 void() dog_die3		=[	$death3,	dog_die4	] {};
@@ -227,7 +220,9 @@ void() dog_die5		=[	$death5,	dog_die6	] {};
 void() dog_die6		=[	$death6,	dog_die7	] {};
 void() dog_die7		=[	$death7,	dog_die8	] {};
 void() dog_die8		=[	$death8,	dog_die9	] {};
-void() dog_die9		=[	$death9,	dog_dead	] {};
+void() dog_die9		=[	$death9,	dog_die9	] {
+	self.solid = SOLID_NOT; 
+};
 
 void() dog_dieb1		=[	$deathb1,	dog_dieb2	] {};
 void() dog_dieb2		=[	$deathb2,	dog_dieb3	] {};
@@ -237,19 +232,22 @@ void() dog_dieb5		=[	$deathb5,	dog_dieb6	] {};
 void() dog_dieb6		=[	$deathb6,	dog_dieb7	] {};
 void() dog_dieb7		=[	$deathb7,	dog_dieb8	] {};
 void() dog_dieb8		=[	$deathb8,	dog_dieb9	] {};
-void() dog_dieb9		=[	$deathb9,	dog_dead	] {};
+void() dog_dieb9		=[	$deathb9,	dog_dieb9	] {
+	self.solid = SOLID_NOT; 
+};
 
 
 void() dog_die =
 {
 // check for gib
-	if (self.health < -100)
+	if (self.health < -60)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowHead ("progs/h_dog.mdl", self.health);
+		remove(self);
 		return;
 	}
 

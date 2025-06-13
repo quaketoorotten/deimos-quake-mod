@@ -256,13 +256,6 @@ if ( vlen (self.origin - self.enemy.origin) < 70)
 
 };
 
-void() army_dead = 
-{	
-	InitCorpse ();
-	setsize (self, '-16 -16 -24', '16 16 -8');
-	self.nextthink = -1;
-};
-
 void()	army_die1	=[	87,	army_die2	] {sound (self, CHAN_VOICE, "soldier/death1.wav", 1, ATTN_NORM);};
 void()	army_die2	=[	88,	army_die3	] {ai_back(5);};
 void()	army_die3	=[	89,	army_die4	]
@@ -273,14 +266,17 @@ void()	army_die6	=[	92,	army_die7	] {ai_back(4); };
 void()	army_die7	=[	93,	army_die8	] {};
 void()	army_die8	=[	94,	army_die9	] {};
 void()	army_die9	=[	95,	army_die10	] {};
-void()	army_die10	=[	96,	army_dead	]{};
+void()	army_die10	=[	96,	army_die10	]
+{
+	self.solid = SOLID_NOT; 
+};
 
 void()	army_cdie1	=[	98,	army_cdie2	] 
 {
 	self.cnt = 1;
 	sound (self, CHAN_VOICE, "soldier/death2.wav", 1, ATTN_NORM); 
 	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NORM); 
-	self.nextthink = time + 0.43;
+	ThrowHead ("progs/h_guard.mdl", self.health);  self.nextthink = time + 0.43;
 };
 
 void()	army_cdie2	=[	98,	army_cdie3	] {ai_forward(5); };
@@ -293,7 +289,10 @@ void()	army_cdie7	=[	103,	army_cdie8	] {};
 void()	army_cdie8	=[	104,	army_cdie9	] {};
 void()	army_cdie9	=[	105,	army_cdie10	] {};
 void()	army_cdie10	=[	106,	army_cdie11	] {};
-void()	army_cdie11	=[	107,	army_dead	]{};
+void()	army_cdie11	=[	107,	army_cdie11	]
+{
+	self.solid = SOLID_NOT; 
+};
 
 
 void() army_die =
@@ -307,7 +306,7 @@ void() army_die =
 	
 
 // check for gib
-	if (self.health < -100)
+	if (self.health < -30)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 
@@ -317,9 +316,8 @@ void() army_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		if(!self.cnt) 
 			ThrowHead ("progs/h_guard.mdl", self.health);
-		else
-			remove(self);
 
+		remove(self);
 		return;
 	}
 	

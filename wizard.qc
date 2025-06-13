@@ -335,13 +335,6 @@ void()	wiz_pain2	=[	43,		wiz_pain3	] {};
 void()	wiz_pain3	=[	44,		wiz_pain4	] {};
 void()	wiz_pain4	=[	45,		wiz_run1	] {};
 
-void() wiz_dead = 
-{	
-	InitCorpse ();
-	setsize (self, '-32 -32 -24', '32 32 -8');
-	self.nextthink = -1;
-};
-
 void()	wiz_death1	=[	46,		wiz_death2	] {
 
 self.flags = self.flags - (self.flags & FL_ONGROUND);
@@ -352,7 +345,9 @@ void()	wiz_death3	=[	48,		wiz_death4	] {};
 void()	wiz_death4	=[	49,		wiz_death5	] {};
 void()	wiz_death5	=[	51,		wiz_death6	] {};
 void()	wiz_death6	=[	52,		wiz_death7	] {};
-void()	wiz_death7	=[	53,		wiz_dead	] {};
+void()	wiz_death7	=[	53,		wiz_death7	] {
+	self.solid = SOLID_NOT; 
+};
 
 void() wiz_die =
 {
@@ -365,6 +360,7 @@ void() wiz_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		for(float i = 0; i < 3; i++)
 			ThrowGib ("progs/gib3.mdl", self.health);
+		remove(self);
 		return;
 	}
 	

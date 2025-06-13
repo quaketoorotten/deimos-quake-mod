@@ -79,20 +79,15 @@ void() shal_pain3       =[      13, shal_pain4      ] {};
 void() shal_pain4       =[      14, shal_pain5      ] {};
 void() shal_pain5       =[      15, shal_run1      ] {};
 
-void() shal_dead = 
-{	
-	InitCorpse ();
-	setsize (self, VEC_HULL3_MIN, '32 32 0');	
-	self.nextthink = -1;
-};
-
 void() shal_death1      =[      16,        shal_death2     ] {};
 void() shal_death2      =[      17,        shal_death3     ] {};
 void() shal_death3      =[      18,        shal_death4     ] {};
 void() shal_death4      =[      19,        shal_death5     ] {};
 void() shal_death5      =[      20,        shal_death6     ] {};
 void() shal_death6      =[      21,        shal_death7     ] {};
-void() shal_death7      =[      22,        shal_dead	     ] {};
+void() shal_death7      =[      22,        shal_death7    ] {	
+	self.solid = SOLID_NOT; 
+};
 
 
 void(entity attacker, float damage) shal_pain =
@@ -118,7 +113,7 @@ void(entity attacker, float damage) shal_pain =
 void() shal_die =
 {
 // check for gib
-	if (self.health < -500)
+	if (self.health < -100)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_shal.mdl", self.health);
@@ -128,6 +123,7 @@ void() shal_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		for(float i = 0; i < 2; i++)
 			ThrowGib ("progs/gib3.mdl", self.health);
+		remove(self);
 		return;
 	}
 
@@ -301,14 +297,14 @@ float()	ShalCheckAttack =
 	{
 		shal_jump1();
         	sound (self, CHAN_VOICE, "shalrath/attack2.wav", 1, ATTN_NORM);
-		SUB_AttackFinishedSpecial (self,2 + 2*random());
+		SUB_AttackFinishedSpecial (self, 2 + 2*random());
 		return TRUE;
 	}
 
 	if (CheckShalMissile ())
 	{
 		self.attack_state = AS_MISSILE;
-		SUB_AttackFinishedSpecial (self,0.65);
+		SUB_AttackFinishedSpecial (self, 0.65);
 		return TRUE;
 	}
 	

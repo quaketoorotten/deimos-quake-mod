@@ -347,7 +347,6 @@ void(entity e) FoundTarget =
 	SightSound (e);
 	HuntTarget (e);
 };
-
 /*
 ===========
 FindTarget
@@ -850,10 +849,7 @@ float() CheckAnyAttack =
 };
 
 float() ai_checkattack =
-{	
-	if (self.flags & FL_TORTURED)
-		return FALSE;
-	
+{
 	// see if the enemy is dead
 	if (self.enemy.health <= 0)
 	{
@@ -876,15 +872,23 @@ float() ai_checkattack =
 			return TRUE;
 		}
 	}
-	
-	self.show_hostile = time + 1;
-	
+
 // check knowledge of enemy	
 	enemy_vis = visible(self, self.enemy);
 	if (enemy_vis)
 	{
 		self.last_sighting = self.enemy.origin;
 		self.search_time = time + 5;
+	}
+
+	if ((self.flags & FL_TORTURED))
+		return FALSE;
+
+// look for other coop players
+	if (coop && self.search_time < time)
+	{
+		if (FindTarget ())
+			return TRUE;
 	}
 
 	if (self.attack_state == AS_MISSILE)
@@ -913,6 +917,7 @@ The monster has an enemy it is trying to kill
 void(float dist) ai_run =
 {		
 	movedist = dist;
+	thing (self, self.enemy.origin);
 	local entity tempgoal, save;
 	local float left, right, dis1, dis2, center;
 	local vector view, Ltarg, Rtarg;

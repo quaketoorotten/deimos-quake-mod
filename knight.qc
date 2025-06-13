@@ -127,13 +127,6 @@ void(entity attacker, float damage)	knight_pain =
 
 //===========================================================================
 
-void() knight_dead = 
-{	
-	InitCorpse ();
-	setsize (self, '-16 -16 -24', '16 16 -8');
-	self.nextthink = -1;
-};
-
 
 void()	knight_die1	=[	67,	knight_die2	] {};
 void()	knight_die2	=[	68,	knight_die3	] {};
@@ -144,24 +137,28 @@ void()	knight_die6	=[	72,	knight_die7	] {};
 void()	knight_die7	=[	73,	knight_die8	] {};
 void()	knight_die8	=[	74,	knight_die9	] {};
 void()	knight_die9	=[	75,	knight_die10] {};
-void()	knight_die10=[	76,	knight_dead ] {};
+void()	knight_die10=[	76,	knight_die10] {
+	self.solid = SOLID_NOT; 
+};
 
 
 void()	knight_dieb1	=[	77,	knight_dieb2	] {};
 void()	knight_dieb2	=[	78,	knight_dieb3	] {};
-void()	knight_dieb3	=[	79,	knight_dieb4	] {};
+void()	knight_dieb3	=[	79,	knight_dieb4	] 	{};
 void()	knight_dieb4	=[	80,	knight_dieb5	] {};
 void()	knight_dieb5	=[	81,	knight_dieb6	] {};
 void()	knight_dieb6	=[	82,	knight_dieb7	] {};
 void()	knight_dieb7	=[	83,	knight_dieb8	] {};
 void()	knight_dieb8	=[	84,	knight_dieb9	] {};
-void()	knight_dieb9 	=[	85,	knight_dead 	] {};
+void()	knight_dieb9 = [	85,	knight_dieb9] {
+	self.solid = SOLID_NOT; 
+};
 
 
 void() knight_die =
 {
 	// check for gib
-	if (self.health < -100)
+	if (self.health < -25)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_mega.mdl", self.health);
@@ -169,6 +166,7 @@ void() knight_die =
 			ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		remove(self);
 		return;
 	}
 	
@@ -179,6 +177,8 @@ void() knight_die =
 	// regular death
 
 	sound (self, CHAN_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
+	self.movetype = MOVETYPE_TOSS;
+	self.takedamage = DAMAGE_YES;
 	self.skin = 1;
 
 	if (random() < 0.5)

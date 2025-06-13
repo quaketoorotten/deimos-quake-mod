@@ -118,7 +118,7 @@ if ( vlen (self.origin - self.enemy.origin) < 80)
 		return;		// use regular attack
 
 // charge		
-	SUB_AttackFinished (self,1);
+	SUB_AttackFinished (self, 1);
 	hknight_char1 ();
 
 };
@@ -127,7 +127,7 @@ void() hknight_CheckContinueCharge =
 {
 	if (time > self.attack_finished)
 	{
-		SUB_AttackFinished (self,3);
+		SUB_AttackFinished (self, 3);
 		hknight_run1 ();
 		return;		// done charging
 	}
@@ -249,13 +249,6 @@ void()	hknight_pain5	=[	42,		hknight_run1	] {};
 
 //============================================================================
 
-void() hknight_dead = 
-{	
-	InitCorpse ();
-	setsize (self, VEC_HULL3_MIN, '32 32 -8');
-	self.nextthink = -1;
-};
-
 void()	hknight_die1	=[	99,	hknight_die2	] {};
 void()	hknight_die2	=[	100,	hknight_die3	] {};
 void()	hknight_die3	=[	101,	hknight_die4	]
@@ -268,19 +261,23 @@ void()	hknight_die8	=[	106,	hknight_die9	] {ai_back(10);};
 void()	hknight_die9	=[	107,	hknight_die10	] {};
 void()	hknight_die10	=[	108,	hknight_die11	] {};
 void()	hknight_die11	=[	109,	hknight_die12	] {};
-void()	hknight_die12	=[	110,	hknight_dead	] {};
+void()	hknight_die12	=[	110,	hknight_die12	] 
+{	
+	self.solid = SOLID_NOT; 
+};
 
 
 void() hknight_die =
 {
 // check for gib
-	if (self.health < -300)
+	if (self.health < -60)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_hellkn.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		remove(self);
 		return;
 	}
 	
@@ -311,7 +308,7 @@ void()	hknight_magica7 =[	97,	hknight_run1	]
 	if (random() < 0.6 && self.cnt <= 3)
 		SUB_CheckRefireSpecial (hknight_magica1);
 	else
-		SUB_AttackFinished (self,3);
+		SUB_AttackFinished (self, 3);
 };
 
 //===========================================================================

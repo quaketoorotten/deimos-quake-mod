@@ -227,9 +227,6 @@ void() barrel_explode =
 	WriteCoord (MSG_BROADCAST, self.origin_x);
 	WriteCoord (MSG_BROADCAST, self.origin_y);
 	WriteCoord (MSG_BROADCAST, self.origin_z);
-		
-	for(float i = 0; i < 3; i++)
-		ThrowDebri ("maps/debri2.bsp", self.health, self.origin);
 
 	BecomeExplosion ();
 };
@@ -955,7 +952,6 @@ void(string gibname, float dm) ThrowGib =
 	local	entity new;
 	new = spawn();
 	new.origin = chunkorg;
-	new.mass = 0;
 	
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');
@@ -977,28 +973,31 @@ void(string gibname, float dm) ThrowGib =
 
 void(string gibname, float dm) ThrowHead =
 {
-	setmodel (self, gibname);
-	setsize (self, '-16 -16 0', '16 16 56');
+	local	entity new;
+	new = spawn();
+	new.origin = self.origin;
+	setmodel (new, gibname);
+	setsize (new, '-16 -16 0', '16 16 56');
 
-	self.velocity = self.velocity + VelocityForDamage(dm);
-	self.velocity = ClipGibVelocity(self.velocity);
+	new.velocity = self.velocity + VelocityForDamage(dm);
+	new.velocity = ClipGibVelocity(new.velocity);
 	
-	self.movetype = MOVETYPE_BOUNCE;
-	self.solid = SOLID_NOT;
-	self.avelocity = crandom() * '0 600 0';
-	self.origin_z = self.origin_z + 4;
-	self.think = SUB_Remove;
-	self.ltime = time;
-	self.nextthink = time + 10 + random()*10;
-	self.frame = 0;
-	self.flags = 0;
+	new.movetype = MOVETYPE_BOUNCE;
+	new.solid = SOLID_NOT;
+	new.avelocity = crandom() * '0 600 0';
+	new.origin_z = new.origin_z + 4;
+	new.think = SUB_Remove;
+	new.ltime = time;
+	new.nextthink = time + 10 + random()*10;
+	new.frame = 0;
+	new.flags = 0;
 };
 
 void(string gibname, float dm) ThrowGibBoss =
 {
 	local	entity new;
 	new = spawn();
-	self.origin = self.origin;
+	new.origin = self.origin;
 	new.origin_z = new.origin_z + 24;
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');
