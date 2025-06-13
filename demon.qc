@@ -206,7 +206,7 @@ void(entity attacker, float damage)	demon1_pain =
 void() demon1_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = -8;	
+	setsize (self, VEC_HULL3_MIN, '32 32 -8');
 	self.nextthink = -1;
 };
 

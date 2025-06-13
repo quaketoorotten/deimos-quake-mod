@@ -313,7 +313,7 @@ void(entity attacker, float damage)	ogre_pain =
 void() ogre_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = -8;	
+	setsize (self, VEC_HULL3_MIN, '32 32 -8');
 	self.nextthink = -1;
 };
 

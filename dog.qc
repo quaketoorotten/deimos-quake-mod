@@ -215,7 +215,7 @@ void(entity attacker, float damage) dog_pain =
 void() dog_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = -8;	
+	setsize (self, '-16 -16 -24', '16 16 -8');
 	self.nextthink = -1;
 };
 

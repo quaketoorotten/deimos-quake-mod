@@ -955,6 +955,7 @@ void(string gibname, float dm) ThrowGib =
 	local	entity new;
 	new = spawn();
 	new.origin = chunkorg;
+	new.mass = 0;
 	
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');

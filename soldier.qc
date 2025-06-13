@@ -259,7 +259,7 @@ if ( vlen (self.origin - self.enemy.origin) < 70)
 void() army_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = -8;	
+	setsize (self, '-16 -16 -24', '16 16 -8');
 	self.nextthink = -1;
 };
 

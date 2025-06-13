@@ -338,7 +338,7 @@ void()	wiz_pain4	=[	45,		wiz_run1	] {};
 void() wiz_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = -8;	
+	setsize (self, '-32 -32 -24', '32 32 -8');
 	self.nextthink = -1;
 };
 

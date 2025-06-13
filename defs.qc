@@ -243,8 +243,7 @@ float	FL_JUMPRELEASED			= 4096;	// for jump debouncing
 float	FL_DODGED			= 8192;
 float	FL_STRAFE			= 16384;
 float	FL_TORTURED			= 32768; // equivilant to q2's AI_GOOD_GUY
-float	FL_DEADMONSTER			= 65536; // used for projectiles so that they "collide" with dead monsters
-
+float	FL_DEADMONSTER			= 65536; // used for projectiles so that they "collide" with dead monster
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves

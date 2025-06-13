@@ -32,6 +32,7 @@ void() W_Precache =
 	precache_sound ("weapons/tink1.wav");	// spikes tink (used in c code)
 	precache_sound ("weapons/grenade.wav");	// grenade launcher
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
+	precache_sound ("weapons/ax1.wav");
 };
 
 float() crandom =
@@ -314,7 +315,7 @@ void(float damage, vector dir, float kick) TraceAttack =
 {
 	local	vector	vel, org;
 	local entity	e;
-	local float		c = 0;
+	local float		c = 0, corpse = 0;
 
 	vel = normalize(dir + v_up*crandom() + v_right*crandom());
 	vel = vel + 2*trace_plane_normal;
@@ -322,7 +323,27 @@ void(float damage, vector dir, float kick) TraceAttack =
 
 	org = trace_endpos - dir*4;
 	
-	TraceDamageTrigger (damage, org, vel); 	
+	if (self.classname == "player") // less breaking the engine
+	{
+		for (e= findradius(self.origin, 2048); e; e = e.chain)
+		{
+			if (!(e.flags & FL_DEADMONSTER))
+				continue;
+			if (!(e.flags & FL_MONSTER))
+				continue;
+			if (e.health > 0)
+				continue;
+			if (!infront(e))
+				continue;
+			corpse = 1;
+			
+			if (corpse == 1)
+				break;
+		}
+
+		if (corpse)
+			TraceDamageTrigger (damage, org, vel); 	
+	}
 	
 	if (trace_ent.takedamage)
 	{	
@@ -335,20 +356,25 @@ void(float damage, vector dir, float kick) TraceAttack =
 	}
 	else
 	{	
-		for (e= findradius(org, 24); e; e = e.chain)
+		if (self.classname == "player")
 		{
-			if (!(e.flags & FL_DEADMONSTER))
-				continue;
-			if (!(e.flags & FL_MONSTER))
-				continue;
-			if (e.health > 0)
-				continue;
-			c = 1;
+			for (e= findradius(org, 24); e; e = e.chain)
+			{
+				if (!(e.flags & FL_DEADMONSTER))
+					continue;
+				if (!(e.flags & FL_MONSTER))
+					continue;
+				if (e.health > 0)
+					continue;
+				if (!infront(e))
+					continue;
+
+				c = 1;
 			
-			if (c == 1)
-				break;
+				if (c == 1)
+					break;
+			}
 		}
-		
 		if (!c)
 		{
 			WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
@@ -460,7 +486,8 @@ void() W_FireAxe =
 {
 	local	vector	source;
 	local	vector	org;
-	local float 	oldaxedmg;
+	local float 	oldaxedmg, c;
+	local entity	e;
 	
 	oldaxedmg = self.axedmg;
 
@@ -470,7 +497,7 @@ void() W_FireAxe =
 
 	if (trace_fraction == 1.0)
 		return;
-	
+
 	org = trace_endpos - v_forward*4;
 
 	TraceDamageTrigger (self.axedmg, org, '0 0 0'); 
@@ -500,14 +527,36 @@ void() W_FireAxe =
 			sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
 	}
 	else
-	{	// hit wall
-		sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
-		//stuffcmd (self, "vibrate tactile/player/axhit2.bnvib");
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
+	{	
+		for (e= findradius(org, 24); e; e = e.chain)
+		{
+			if (!(e.flags & FL_DEADMONSTER))
+				continue;
+			if (!(e.flags & FL_MONSTER))
+				continue;
+			if (e.health > 0)
+				continue;
+			if (!infront(e))
+				continue;
+			c = 1;
+			
+			if (c == 1)
+				break;
+		}
+
+		if (c)
+			sound (self, CHAN_WEAPON, "zombie/z_miss.wav", 1, ATTN_NORM);
+		
+		else
+		{
+			// hit wall
+			sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+			WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+			WriteByte (MSG_BROADCAST, TE_GUNSHOT);
+			WriteCoord (MSG_BROADCAST, org_x);
+			WriteCoord (MSG_BROADCAST, org_y);
+			WriteCoord (MSG_BROADCAST, org_z);
+		}
 	}
 };
 /*

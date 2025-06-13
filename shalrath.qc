@@ -82,7 +82,7 @@ void() shal_pain5       =[      15, shal_run1      ] {};
 void() shal_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = 0;	
+	setsize (self, VEC_HULL3_MIN, '32 32 0');	
 	self.nextthink = -1;
 };
 

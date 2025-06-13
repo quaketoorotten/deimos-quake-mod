@@ -252,7 +252,7 @@ void()	hknight_pain5	=[	42,		hknight_run1	] {};
 void() hknight_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = -8;	
+	setsize (self, VEC_HULL3_MIN, '32 32 -8');
 	self.nextthink = -1;
 };
 

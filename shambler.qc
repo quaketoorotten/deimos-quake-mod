@@ -492,7 +492,7 @@ void(entity attacker, float damage)	sham_pain =
 void() sham_dead = 
 {	
 	InitCorpse ();
-	self.maxs_z = 0;	
+	setsize (self, VEC_HULL2_MIN, '42 42 8');
 	self.nextthink = -1;
 };
 
