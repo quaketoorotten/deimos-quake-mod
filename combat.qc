@@ -53,22 +53,22 @@ float(entity targ, entity inflictor) CanDamage =
 Killed
 ============
 */
-void(entity attacker) Killed =
+void(entity targ, entity attacker) Killed =
 {
 // why the fuck wasn't this only for the player before
-	if (self.health < -99 && (self.flags & FL_CLIENT))
-		self.health = -99;		// don't let sbar look bad if a player
+	if (targ.health < -99 && (targ.flags & FL_CLIENT))
+		targ.health = -99;		// don't let sbar look bad if a player
 
-	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE)
+	if (targ.movetype == MOVETYPE_PUSH || targ.movetype == MOVETYPE_NONE)
 	{	// doors, triggers, etc
-		self.th_die ();
+		targ.th_die ();
 		return;
 	}
 
-	self.enemy = attacker;
+	targ.enemy = attacker;
 	
 // bump the monster counter
-	if ((self.flags & FL_MONSTER) && !(self.deadflag & DEAD_DEAD) )
+	if ((targ.flags & FL_MONSTER) && !(targ.deadflag & DEAD_DEAD) )
 	{
 		killed_monsters = killed_monsters + 1;
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
@@ -76,69 +76,68 @@ void(entity attacker) Killed =
 
 	ClientObituary(self, attacker);
 	
-	if(!(self.flags & FL_MONSTER) )
-	{
-		self.touch = SUB_Null;
-		self.takedamage = DAMAGE_NO;
-	}
+	if(!(targ.flags & FL_MONSTER) )
+		targ.takedamage = DAMAGE_NO;
+
+	targ.touch = SUB_Null;
 
 	monster_death_use();
-	self.th_die ();
+	targ.th_die ();
+	if (targ.mass > 0)
+		targ.mass = 0;
 };
 
-void M_React (entity attacker) // q2 port
+void M_React (entity attacker, entity targ) // q2 port
 {	
 	if (!(attacker.flags & FL_MONSTER) && !(attacker.flags & FL_CLIENT))
 		return;
-		
-	if (self.flags & FL_TORTURED)
+	
+	if (attacker == targ || attacker == targ.enemy)
 		return;
 	
-	if (self == attacker && attacker == self.enemy)
+	if (targ.flags & FL_TORTURED)
 		return;
 		
-	// if attacker is a client, get mad at them because he's good and we're not
 	if (attacker.flags & FL_CLIENT)
 	{
-		if ((self.enemy.flags & FL_CLIENT) && self.enemy)
+		if (targ.enemy.flags & FL_CLIENT && targ.enemy)
 		{
-			if(visible(self, self.enemy))
+			if(visible(targ, targ.enemy))
 			{
-				self.oldenemy = attacker;
+				targ.oldenemy = attacker;
 				return;
 			}
-			self.oldenemy = self.enemy;
+			targ.oldenemy = targ.enemy;
 		}
-		self.enemy = attacker;
-		FoundTarget();
+		targ.enemy = attacker;
+		FoundTarget(targ);
 		return;
 	}
-
-	// get mad unless of the same class (except for soldiers)
-	if ( (self.classname != attacker.classname) 
-		|| (self.classname == "monster_army" )
-		|| (self.classname == "monster_enforcer" ) )
+	
+	if ( (targ.classname != attacker.classname) 
+		|| (targ.classname == "monster_army" )
+		|| (targ.classname == "monster_enforcer" ) )
 	{
-		if (self.enemy.flags & FL_CLIENT)
-			self.oldenemy = self.enemy;
+		if (targ.enemy.classname == "player")
+			targ.oldenemy = targ.enemy;
 
-		self.enemy = attacker;
-		FoundTarget ();
-	} 
-	else if (attacker.enemy == self) // if they *meant* to shoot us, then shoot back
-	{
-		if (self.enemy.flags & FL_CLIENT)
-			self.oldenemy = self.enemy;
-
-		self.enemy = attacker;
-		FoundTarget ();
+		targ.enemy = attacker;
+		FoundTarget (targ);
 	}
-	else if (attacker.enemy && attacker.enemy != self) // otherwise get mad at whoever they are mad at (help our buddy) unless it is us!
+	else if (attacker.enemy == targ)
 	{
-		if ((self.enemy.flags & FL_CLIENT) && self.enemy)
-			self.oldenemy = self.enemy;
-		self.enemy = attacker.enemy;
-		FoundTarget ();
+		if (targ.enemy.classname == "player")
+			targ.oldenemy = targ.enemy;
+
+		targ.enemy = attacker;
+		FoundTarget (targ);
+	}
+	else if (attacker.enemy && attacker.enemy != targ) // otherwise get mad at whoever they are mad at (help our buddy) unless it is us!
+	{
+		if ((targ.enemy.flags & FL_CLIENT) && targ.enemy)
+			targ.oldenemy = targ.enemy;
+		targ.enemy = attacker.enemy;
+		FoundTarget (targ);
 	}
 }
 
@@ -251,7 +250,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float kick) T
 			if(self.classname == "func_breakable")
 				self.enemy = inflictor;
 
-			Killed (attacker);
+			Killed (self, attacker);
 			self = oldself;
 			return;
 		}
@@ -261,9 +260,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, float kick) T
 	oldself = self;
 	self = targ;
 
-	if ((self.flags & FL_MONSTER) && attacker != world)
+	if (self.flags & FL_MONSTER)
 	{
-		M_React (attacker);
+		M_React (attacker, self);
 		
 		if(take > 0)
 		{
@@ -330,4 +329,3 @@ void(entity inflictor, entity attacker, float radius, entity ignore) T_RadiusDam
 		head = head.chain;
 	}
 };
-

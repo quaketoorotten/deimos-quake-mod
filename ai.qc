@@ -277,75 +277,75 @@ void() ChangeYaw =
 
 //============================================================================
 
-void() HuntTarget =
+void(entity e) HuntTarget =
 {	
-	self.goalentity = self.enemy;
-	if(!(self.flags & FL_DODGED))
-		self.think = self.th_run;
-	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
-	self.nextthink = time + 0.1;
-	SUB_AttackFinished (self, 1);	// wait a while before first attack
+	e.goalentity = e.enemy;
+	if(!(e.flags & FL_DODGED))
+		e.think = e.th_run;
+	e.ideal_yaw = vectoyaw(e.enemy.origin - e.origin);
+	e.nextthink = time + 0.1;
+	SUB_AttackFinished (e, 1);	// wait a while before first attack
 };
 
-void() SightSound =
+void(entity e) SightSound =
 {
 local float	rsnd;
 
-	if (self.classname == "monster_ogre")	
-		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_knight")
-		sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_shambler")
-		sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_demon1")
-		sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_wizard")
-		sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_zombie")
-		sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_dog")
-		sound (self, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_hell_knight")
-		sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_tarbaby")
-		sound (self, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_vomit")
-		sound (self, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_enforcer")
+	if (e.classname == "monster_ogre")	
+		sound (e, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_knight")
+		sound (e, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_shambler")
+		sound (e, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_demon1")
+		sound (e, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_wizard")
+		sound (e, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_zombie")
+		sound (e, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_dog")
+		sound (e, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_hell_knight")
+		sound (e, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_tarbaby")
+		sound (e, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_vomit")
+		sound (e, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_enforcer")
 	{
 		rsnd = rint(random() * 3);			
 		if (rsnd == 1)
-			sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
+			sound (e, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
 		else if (rsnd == 2)
-			sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
+			sound (e, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
 		else if (rsnd == 0)
-			sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
+			sound (e, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
+			sound (e, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
 	}
-	else if (self.classname == "monster_army")
-		sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_shalrath")
-		sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_boss2")
-		sound (self, CHAN_VOICE, "boss2/ssight.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_army")
+		sound (e, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_shalrath")
+		sound (e, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
+	else if (e.classname == "monster_boss2")
+		sound (e, CHAN_VOICE, "boss2/ssight.wav", 1, ATTN_NORM);
 };
 
-void() FoundTarget =
+void(entity e) FoundTarget =
 {	
 	dprint("got one");
-	if (self.enemy.classname == "player")
+	if (e.enemy.classname == "player")
 	{	// let other monsters see this monster for a while
 		dprint("got one");
-		sight_entity = self;
+		sight_entity = e;
 		sight_entity_time = time;
 	}
 	
-	self.show_hostile = time + 1;		// wake up other monsters
+	e.show_hostile = time + 1;		// wake up other monsters
 	
-	self.last_sighting = self.enemy.origin;
-	SightSound ();
-	HuntTarget ();
+	e.last_sighting = e.enemy.origin;
+	SightSound (e);
+	HuntTarget (e);
 };
 
 /*
@@ -434,7 +434,7 @@ float() FindTarget =
 		}
 	}
 	
-	FoundTarget ();
+	FoundTarget (self);
 	return TRUE;
 };
 
@@ -862,7 +862,7 @@ float() ai_checkattack =
 		if (self.oldenemy.health > 0)
 		{
 			self.enemy = self.oldenemy;
-			HuntTarget ();
+			HuntTarget (self);
 		}
 		else
 		{
