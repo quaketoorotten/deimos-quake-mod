@@ -37,7 +37,7 @@ void() monster_use =
 // heard
 	self.enemy = activator;
 	self.nextthink = time + 0.1;
-	FoundTarget(self);
+	FoundTarget();
 };
 
 /*
