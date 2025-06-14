@@ -431,6 +431,11 @@ void() monster_wizard =
 	precache_sound ("wizard/wpain.wav");
 	precache_sound ("wizard/wsight.wav");
 
+	spawn_wizard ();
+};
+
+void() spawn_wizard =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -450,6 +455,7 @@ void() monster_wizard =
 	self.th_die = wiz_die;
 	self.th_melee = wiz_bite1;
 	self.th_checkattack = WizardCheckAttack;
+	self.th_spawn = spawn_wizard;
 		
-	flymonster_start ();
+	flymonster_start();
 };

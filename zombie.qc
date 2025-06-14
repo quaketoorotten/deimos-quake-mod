@@ -498,6 +498,11 @@ void() monster_zombie =
 	precache_sound ("zombie/z_hit.wav");
 	precache_sound ("zombie/idle_w2.wav");
 
+	spawn_zombie ();
+};
+
+void() spawn_zombie =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -515,6 +520,7 @@ void() monster_zombie =
 	self.th_pain = zombie_pain;
 	self.th_die = zombie_die;
 	self.th_missile = zombie_missile;
+	self.th_spawn = spawn_zombie;
 
 	if (self.spawnflags & SPAWN_CRUCIFIED)
 	{

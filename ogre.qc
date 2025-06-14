@@ -412,13 +412,9 @@ void() ogre_die =
 /*QUAKED monster_ogre (1 0 0) (-32 -32 -24) (32 32 64) Ambush // self.max_z -= 88;
 
 */
-void() monster_ogre =
+
+void() monster_ogre_cache =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
 	precache_model ("progs/ogre.mdl");
 	precache_model ("progs/h_ogre.mdl");
 	precache_model ("progs/grenade.mdl");
@@ -430,7 +426,21 @@ void() monster_ogre =
 	precache_sound ("ogre/ogpain1.wav");
 	precache_sound ("demon/dhit2.wav");
 	precache_sound ("ogre/ogwake.wav");
+};
 
+void() monster_ogre =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	monster_ogre_cache();
+	spawn_ogre ();
+};
+
+void() spawn_ogre =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -452,13 +462,9 @@ void() monster_ogre =
 	self.th_checkattack = OgreCheckAttack;
 	self.mass = 200;
 	self.dspeed = 0;
+	self.th_spawn = spawn_ogre;
 		
 	walkmonster_start();
-};
-
-void() monster_ogre_marksman =
-{
-	monster_ogre ();
 };
 
 

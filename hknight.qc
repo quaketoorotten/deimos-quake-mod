@@ -445,6 +445,11 @@ void() monster_hell_knight =
 	precache_sound2 ("knight/sword1.wav");
 	precache_sound2 ("knight/sword2.wav");
 	
+	spawn_hknight();
+};
+
+void() spawn_hknight =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -463,6 +468,7 @@ void() monster_hell_knight =
 	self.th_missile = hknight_magica1;
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
+	self.th_spawn = spawn_hknight;
 	
 	walkmonster_start ();
-};
+}

@@ -1,4 +1,5 @@
 ../progs.dat
+#pragma autoproto
 
 defs.qc
 subs.qc

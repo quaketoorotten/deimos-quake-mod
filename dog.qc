@@ -366,6 +366,11 @@ void() monster_dog =
 	precache_sound ("dog/dsight.wav");
 	precache_sound ("dog/idle.wav");
 
+	spawn_dog();
+};
+
+void() spawn_dog =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -385,6 +390,7 @@ void() monster_dog =
 	self.th_melee = dog_atta1;
 	self.th_missile = dog_leap1;
 	self.th_checkattack = DogCheckAttack;
-
+	self.th_spawn = spawn_dog;
+		
 	walkmonster_start();
 };

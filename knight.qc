@@ -205,14 +205,9 @@ void() knight_attack =
 /*
 QUAKED monster_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-void() monster_knight =
+void() monster_knight_cache = 
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-
+	
 	precache_model ("progs/knight.mdl");
 	precache_model ("progs/h_mega.mdl");
 
@@ -222,7 +217,21 @@ void() monster_knight =
 	precache_sound ("knight/sword1.wav");
 	precache_sound ("knight/sword2.wav");
 	precache_sound ("knight/idle.wav");
+}
 
+void() monster_knight =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	monster_knight_cache ();
+	spawn_knight ();
+};
+
+void() spawn_knight =
+{	
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -240,6 +249,7 @@ void() monster_knight =
 	self.th_melee = knight_attack;
 	self.th_pain = knight_pain;
 	self.th_die = knight_die;
-
-	walkmonster_start ();
+	self.th_spawn = spawn_knight;
+		
+	walkmonster_start();
 };

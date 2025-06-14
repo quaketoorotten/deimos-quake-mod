@@ -137,6 +137,12 @@ void() monster_tarbaby =
 	precache_sound ("blob/land1.wav");
 	precache_sound ("blob/sight1.wav");
 	
+	spawn_tbaby();
+};
+
+void() spawn_tbaby = 
+{
+	monster_tarbaby();
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -153,7 +159,8 @@ void() monster_tarbaby =
 	self.th_die = tbaby_die1;
 	self.th_melee = tbaby_leap1;
 	self.th_missile = tbaby_leap1;
+	self.th_spawn = spawn_tbaby;
 	
 	flymonster_start ();
-};
+}
 

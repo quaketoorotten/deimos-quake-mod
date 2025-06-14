@@ -96,6 +96,13 @@ void() multi_touch =
 	multi_trigger ();
 };
 
+void() trigger_on = 
+{	
+	self.use = multi_use;
+	self.solid = SOLID_TRIGGER;
+	setorigin(self, self.origin);
+}
+
 /*QUAKED trigger_multiple (.5 .5 .5) ? notouch
 Variable sized repeatable trigger.  Must be targeted at one or more entities.  If "health" is set, the trigger must be killed to activate each time.
 If "delay" is set, the trigger waits some time after activating before firing.
@@ -109,6 +116,8 @@ sounds
 4)
 set "message" to text string
 */
+float SPAWNFLAG_LATE = 2;
+
 void() trigger_multiple =
 {
 	if (self.sounds == 1)
@@ -132,6 +141,13 @@ void() trigger_multiple =
 	self.use = multi_use;
 
 	InitTrigger ();
+
+	if (self.spawnflags & SPAWNFLAG_LATE)
+	{
+		self.use = trigger_on;
+		self.solid = SOLID_NOT;
+		setorigin(self, self.origin);
+	}
 
 	if (self.health)
 	{
@@ -631,6 +647,13 @@ Walking monsters that touch this will jump in the direction of the trigger's ang
 "speed" default to 200, the speed thrown forward
 "height" default to 200, the speed thrown upwards
 */
+void() trigger_monsterjump_on = 
+{	
+	//self.use = multi_use;
+	self.solid = SOLID_TRIGGER;
+	setorigin(self, self.origin);
+}
+
 void() trigger_monsterjump =
 {
 	if (!self.speed)
@@ -640,6 +663,14 @@ void() trigger_monsterjump =
 	if (self.angles == '0 0 0')
 		self.angles = '0 360 0';
 	InitTrigger ();
+
+	if (self.spawnflags & SPAWNFLAG_LATE)
+	{
+		self.use = trigger_monsterjump_on;
+		self.solid = SOLID_NOT;
+		setorigin(self, self.origin);
+	}
+	
 	self.touch = trigger_monsterjump_touch;
 };
 

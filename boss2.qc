@@ -504,6 +504,11 @@ void() monster_boss2 =
 	precache_sound ("weapons/shotgn2.wav");	// super shotgun
 	precache_sound ("doors/drclos4.wav");
 
+	spawn_boss2();
+};
+
+void() spawn_boss2 =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 	setmodel (self, "progs/boss2.mdl");
@@ -523,7 +528,7 @@ void() monster_boss2 =
 	self.th_melee = boss2_melee;
 	self.th_missile = boss2_ranged;
 	self.th_pain = boss2_pain;
+	self.th_spawn = spawn_boss2;
 	
-	walkmonster_start();
-};
-
+	walkmonster_start ();
+}

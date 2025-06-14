@@ -333,10 +333,8 @@ local float	rsnd;
 
 void(entity e) FoundTarget =
 {	
-	dprint("got one");
 	if (e.enemy.classname == "player")
 	{	// let other monsters see this monster for a while
-		dprint("got one");
 		sight_entity = e;
 		sight_entity_time = time;
 	}
@@ -1033,8 +1031,8 @@ void(float dist) ai_run =
 				self.last_sighting = Ltarg;
 				view = normalize(self.goalentity.origin - self.origin);
 				self.angles_y = self.ideal_yaw = vectoyaw(view);
-				dprint("turn left");
-				dprint("\n");
+				//dprint("turn left");
+				//dprint("\n");
 				//line(self.goalentity.origin);
 			}
 			else if (right >= center && right > left)
@@ -1050,17 +1048,17 @@ void(float dist) ai_run =
 				self.last_sighting = Rtarg;
 				view = normalize(self.goalentity.origin - self.origin);
 				self.angles_y = self.ideal_yaw = vectoyaw(view);
-				dprint("turn right");
-				dprint("\n");
+				//dprint("turn right");
+				//dprint("\n");
 				//line(self.goalentity.origin);
 			}
 		}
-		else
+		/*else
 		{
 			dprint("good path");
 			dprint("\n");
 			//line(self.goalentity.origin);
-		}
+		}*/
 	}
 		
 // head straight in

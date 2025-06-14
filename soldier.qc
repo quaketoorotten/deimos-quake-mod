@@ -276,7 +276,7 @@ void()	army_cdie1	=[	98,	army_cdie2	]
 	self.cnt = 1;
 	sound (self, CHAN_VOICE, "soldier/death2.wav", 1, ATTN_NORM); 
 	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NORM); 
-	ThrowHead ("progs/h_guard.mdl", self.health);  self.nextthink = time + 0.43;
+	self.nextthink = time + 0.43;
 };
 
 void()	army_cdie2	=[	98,	army_cdie3	] {ai_forward(5); };
@@ -380,6 +380,11 @@ void() monster_army =
 	precache_sound ("player/udeath.wav");		// gib death
 
 
+	spawn_army();
+};
+
+void() spawn_army =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -400,6 +405,7 @@ void() monster_army =
 	self.th_dodge = army_duckdown1;
 	self.th_checkattack = SoldierCheckAttack;
 	self.dspeed = 0;
-
-	walkmonster_start ();
+	self.th_spawn = spawn_army;
+		
+	walkmonster_start();
 };

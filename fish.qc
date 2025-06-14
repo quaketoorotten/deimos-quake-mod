@@ -184,6 +184,11 @@ void() monster_fish =
 	precache_sound2 ("fish/bite.wav");
 	precache_sound2 ("fish/idle.wav");
 
+	spawn_fish();
+};
+
+void() spawn_fish =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -200,7 +205,8 @@ void() monster_fish =
 	self.th_die = f_die;
 	self.th_pain = fish_pain;
 	self.th_melee = f_attack1;
+	self.th_spawn = spawn_fish;
 	
 	swimmonster_start ();
-};
+}
 

@@ -389,13 +389,9 @@ void() Demon_JumpTouch =
 /*QUAKED monster_demon1 (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
 */
-void() monster_demon1 =
+
+void() monster_demon1_cache =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
 	precache_model ("progs/demon.mdl");
 	precache_model ("progs/h_demon.mdl");
 
@@ -406,7 +402,10 @@ void() monster_demon1 =
 	precache_sound ("demon/idle1.wav");
 	precache_sound ("demon/idle2.wav");
 	precache_sound ("demon/sight2.wav");
+}
 
+void() spawn_demon1 =
+{	
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -426,7 +425,20 @@ void() monster_demon1 =
 	self.th_missile = demon1_jump1;			// jump attack
 	self.th_pain = demon1_pain;
 	self.th_checkattack= DemonCheckAttack;
-		
+	self.th_spawn = spawn_demon1;		
+
 	walkmonster_start();
+};
+
+void() monster_demon1 =
+{		
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	
+	monster_demon1_cache ();
+	spawn_demon1 ();
 };
 

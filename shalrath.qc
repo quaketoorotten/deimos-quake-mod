@@ -354,6 +354,11 @@ void() monster_shalrath =
 	precache_sound2 ("shalrath/pain.wav");
 	precache_sound2 ("shalrath/sight.wav");
 	
+	spawn_shalrath();
+};
+
+void() spawn_shalrath =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 	
@@ -373,9 +378,9 @@ void() monster_shalrath =
 	self.th_pain = shal_pain;
 	self.th_checkattack = ShalCheckAttack;
 
-	self.think = walkmonster_start;
-	self.nextthink = time + 0.1 + random ()*0.1;	
-
-};
+	self.th_spawn = spawn_shalrath;
+	
+	walkmonster_start ();
+}
 
 

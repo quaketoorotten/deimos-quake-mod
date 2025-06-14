@@ -11,8 +11,6 @@
 // };
 
 
-
-
 /*
 ================
 monster_use
@@ -20,8 +18,25 @@ monster_use
 Using a monster makes it angry at the current activator
 ================
 */
+float TRIGGER_SPAWN = 4;
+float SPAWN_SLIENT = 8;
+float SPAWN_ANGRY = 16;
+
+void() monster_spawn =
+{		
+	self.spawnflags &= ~TRIGGER_SPAWN;
+	if(!(self.spawnflags & SPAWN_SLIENT))
+		spawn_tfog(self.origin);
+
+	self.th_spawn();
+	self.nextthink = time + 0.1;
+	
+	if (self.spawnflags & SPAWN_ANGRY)	
+		FoundTarget(self);
+}
+
 void() monster_use =
-{
+{	
 	if (self.enemy)
 		return;
 	if (self.health <= 0)
@@ -32,6 +47,19 @@ void() monster_use =
 		return;
 	if (activator.classname != "player")
 		return;
+
+	if (self.spawnflags & TRIGGER_SPAWN)
+	{	
+		if (self.spawnflags & SPAWN_ANGRY)	
+			self.enemy = activator;
+
+		self.think = monster_spawn;
+		if(self.delay > 0)
+			self.nextthink = time + self.delay;
+		else
+			self.nextthink = time + 0.1;
+		return;
+	}
 	
 // delay reaction so if the monster is teleported, its sound is still
 // heard
@@ -39,6 +67,7 @@ void() monster_use =
 	self.nextthink = time + 0.1;
 	FoundTarget(self);
 };
+
 
 /*
 ================
@@ -87,6 +116,13 @@ void() walkmonster_start_go =
 	self.view_ofs = '0 0 25';
 	self.use = monster_use;
 	self.flags = self.flags | FL_MONSTER;
+
+	if (self.spawnflags & TRIGGER_SPAWN)
+	{
+		self.model = string_null;
+		self.solid = SOLID_NOT;
+		return;
+	}
 	
 	if (self.target != string_null)
 	{
@@ -149,6 +185,13 @@ void() flymonster_start_go =
 		dprint (vtos(self.origin));
 		dprint ("\n");
 	}
+	
+	if (self.spawnflags & TRIGGER_SPAWN)
+	{
+		self.model = string_null;
+		self.solid = SOLID_NOT;
+		return;
+	}
 
 	if (self.target)
 	{
@@ -200,6 +243,13 @@ void() swimmonster_start_go =
 	
 	self.flags = self.flags | FL_SWIM;
 	self.flags = self.flags | FL_MONSTER;
+
+	if (self.spawnflags & TRIGGER_SPAWN)
+	{
+		self.model = string_null;
+		self.solid = SOLID_NOT;
+		return;
+	}
 
 	if (self.target)
 	{

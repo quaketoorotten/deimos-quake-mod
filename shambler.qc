@@ -538,13 +538,8 @@ void() sham_die =
 
 /*QUAKED monster_shambler (1 0 0) (-42 -42 -24) (42 42 88) Ambush
 */
-void() monster_shambler =
+void() monster_shambler_cache = 
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
 	precache_model ("progs/shambler.mdl");
 	precache_model ("progs/h_shams.mdl");
 	precache_model ("progs/s_light.mdl");
@@ -559,7 +554,23 @@ void() monster_shambler =
 	precache_sound ("shambler/melee1.wav");
 	precache_sound ("shambler/melee2.wav");
 	precache_sound ("shambler/smack.wav");
+}
 
+
+void() monster_shambler =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	monster_shambler_cache();
+	spawn_shambler();
+	self.th_spawn = spawn_shambler;
+};
+
+void() spawn_shambler =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 	setmodel (self, "progs/shambler.mdl");
@@ -580,6 +591,6 @@ void() monster_shambler =
 	self.th_missile = sham_ranged;
 	self.th_pain = sham_pain;
 	self.th_checkattack = ShamCheckAttack;
-	
+		
 	walkmonster_start();
 };

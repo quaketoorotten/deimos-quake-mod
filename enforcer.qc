@@ -360,6 +360,11 @@ void() monster_enforcer =
 	precache_sound2 ("enforcer/sight3.wav");
 	precache_sound2 ("enforcer/sight4.wav");
 	
+	spawn_enf();
+};
+
+void() spawn_enf =
+{
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -382,6 +387,7 @@ void() monster_enforcer =
 	self.mass = 200;
 	self.th_checkattack = EnforcerCheckAttack;
 	self.dspeed = 0;
+	self.th_spawn = spawn_enf;
 
 	walkmonster_start();
-};
+}
