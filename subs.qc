@@ -242,7 +242,7 @@ void() SUB_UseTargets =
 //
 // kill the killtagets
 //
-	if (self.killtarget)
+	if (self.killtarget != "" && self.killtarget != " ")
 	{
 		t = world;
 		do
@@ -251,10 +251,7 @@ void() SUB_UseTargets =
 			if (!t)
 				return;
 			if((t.classname == "func_breakable") && (t.targetname == self.killtarget)) // make breakables blow up not disapear
-			{
 				T_Damage (t, activator, activator, t.health, 0);
-				return;
-			}
 			else
 				remove (t);
 		} while ( 1 );
@@ -263,7 +260,7 @@ void() SUB_UseTargets =
 //
 // fire targets
 //
-	if (self.target)
+	if (self.target != "" && self.target != " ")
 	{
 		act = activator;
 		t = world;

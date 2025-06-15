@@ -1077,6 +1077,18 @@ void() func_creator =
 	droptofloor();
 };
 
+void() func_cruxshams =
+{
+	precache_model ("progs/cruxshams.mdl");
+
+	setmodel (self, "progs/cruxshams.mdl");
+
+	setsize (self, '0 0 -24', VEC_HULL_MAX);
+	self.movetype = MOVETYPE_NONE;
+	self.solid = SOLID_NOT;
+};
+
+
 void() func_corpse =
 {
 	precache_model ("progs/player.mdl");

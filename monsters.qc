@@ -77,6 +77,8 @@ When a mosnter dies, it fires all of its targets with the current
 enemy as activator.
 ================
 */
+
+
 void() monster_death_use =
 {
 // fall to ground
@@ -84,7 +86,10 @@ void() monster_death_use =
 		self.flags = self.flags - FL_FLY;
 	if (self.flags & FL_SWIM)
 		self.flags = self.flags - FL_SWIM;
-
+	
+	if (self.deathtarget)
+		self.target = self.deathtarget;
+	
 	if (!self.target)
 		return;
 

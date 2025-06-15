@@ -97,51 +97,23 @@
 	killtarget(string) : "Killtarget"
 	delay(integer) : "Delay"
 ]
-@baseclass size(0 0 0, 32 32 56) color(80 0 200) base(Item) = Ammo
-[
-	spawnflags(flags) =
-	[
-		1 : "Large box" : 0
-	]
-]
 
 @PointClass
-    base(Ammo)
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_batt1.bsp",
-                                ":maps/b_batt0.bsp"
-        }}
-    ) =
+    base(Appearflags)
+    model({ "path": ":maps/b_batt0.bsp" }) =
     item_cells : "Thunderbolt ammo" []
 
 @PointClass
-    base(Ammo)
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_rock1.bsp",
-                                ":maps/b_rock0.bsp"
-        }}
-    ) =
-    item_rockets : "Rockets" []
+    base(Appearflags)
+    model({ "path": ":maps/b_rock0.bsp" }) = item_rockets : "Rockets" []
 
 @PointClass
-    base(Ammo)
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_shell1.bsp",
-                                ":maps/b_shell0.bsp"
-        }}
-    ) = item_shells : "Shells" []
+    base(Appearflags)
+    model({ "path": ":maps/b_shell0.bsp" }) = item_shells : "Shells" []
 
 @PointClass
-    base(Ammo)
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_nail1.bsp",
-                                ":maps/b_nail0.bsp"
-        }}
-    ) = item_spikes : "Nailgun/Perforator ammo" []
+    base(Appearflags)
+    model({ "path": ":maps/b_nail0.bsp" }) = item_spikes : "Nailgun/Perforator ammo" []
 
 @PointClass
     size(0 0 0, 32 32 56)
@@ -185,17 +157,6 @@
 	item_key1 : "Silver key" []
 @PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/w_g_key.mdl" }) =
 	item_key2 : "Gold key" []
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/end1.mdl" }) =
-	item_sigil : "Sigil"
-[
-	spawnflags(Flags) =
-	[
-		1 : "Episode 1" : 1
-		2 : "Episode 2" : 0
-		4 : "Episode 3" : 0
-		8 : "Episode 4" : 0
-	]
-]
 
 //
 // weapons
@@ -226,6 +187,7 @@
 		8 : "Spawn Silently" : 0
 		16 : "Spawn Angry" : 0
 	]
+	deathtarget(string): "Target on Death" 
 ]
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 24) model({ "path": ":progs/tortplayer.mdl" }) = monster_tortured : "Tortured" []

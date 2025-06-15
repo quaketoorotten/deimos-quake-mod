@@ -715,6 +715,7 @@ float(entity targ, entity inflictor) CanDamage;
 .float armorbit;
 .float() th_checkattack;
 .void()  th_spawn;
+.string deathtarget;
 
 // store them keys, cus i dont like the hipnotic keys placement
 .float keys;
