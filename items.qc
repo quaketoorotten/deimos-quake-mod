@@ -84,9 +84,15 @@ float (entity e, float healamount, float ignore) T_Heal =
 		return 0;
 	if ((!ignore) && (e.health >= other.max_health))
 		return 0;
-	healamount = ceil(healamount);
+	
+	if (self.healtype == 3)
+	{
+		if(e.health < 100)
+			e.health = 100;
+	}
+	else
+		e.health = e.health + healamount;
 
-	e.health = e.health + healamount;
 	if ((!ignore) && (e.health >= other.max_health))
 		e.health = other.max_health;
 		
@@ -106,6 +112,7 @@ one point per second.
 float	H_ROTTEN = 1;
 float	H_MEGA = 2;
 float	H_MINI = 4;
+float	H_BERS = 8;
 .float	healamount, healtype;
 void() health_touch;
 void() item_megahealth_rot;
@@ -145,14 +152,25 @@ void() item_health =
 		self.healtype = 0;
 	}
 	else
+	if (self.spawnflags & H_BERS)
+	{
+		precache_model("maps/b_bh100.bsp");
+		precache_sound("items/r_item2.wav");
+		setmodel(self, "maps/b_bh100.bsp");
+		self.noise = "items/r_item2.wav";
+		self.healamount = 0;
+		self.healtype = 3;
+	}
+	else
 	{
 		precache_model("maps/b_bh25.bsp");
 		precache_sound("items/health1.wav");
 		setmodel(self, "maps/b_bh25.bsp");
 		self.noise = "items/health1.wav";
 		self.healamount = 25;
-		self.healtype = 1;
+		self.healtype = 0;
 	}
+
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -165,7 +183,17 @@ void() health_touch =
 	if (other.classname != "player")
 		return;
 	
-	if (self.healtype == 2) // Megahealth?  Ignore max_health...
+	if (self.healtype == 3) // Berserk? Boost player to max health
+	{	
+		if (other.items2 & IT2_BERSERK)
+			return;
+		if (other.health >= 250)
+			return;
+		if (!T_Heal(other, self.healamount, 1))
+			return;
+	}
+	
+	else if (self.healtype == 2) // Megahealth?  Ignore max_health...
 	{
 		if (other.health >= 250)
 			return;
@@ -178,28 +206,48 @@ void() health_touch =
 			return;
 	}
 	
-	sprint(other, "You receive ");
-	s = ftos(self.healamount);
-	sprint(other, s);
-	sprint(other, " health\n");
-	
 // health touch sound
 	sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 
-	stuffcmd (other, "bf\n");
-	
 	self.model = string_null;
 	self.solid = SOLID_NOT;
 
-	// Megahealth = rot down the player's super health
-	if (self.healtype == 2)
-	{
+	if (self.healtype == 3)
+	{	
+		sprint(other, "You got BERSERK! ");
+		sprint(other, "\n ");
+		stuffcmd (other, "bf\n");
+		//stuffcmd (other, "v_cshift 150 0 0 100\n");	
+
 		self.nextthink = time + 5;
 		self.think = item_megahealth_rot;
-		self.owner = other;
+		other.items2 |= IT2_BERSERK;
+		//other.berserk_finished = time + 20;
+		//other.berserk_time = 1;
+	}
+	// Megahealth = rot down the player's super health
+	else if (self.healtype == 2)
+	{		
+		sprint(other, "You receive ");
+		s = ftos(self.healamount);
+		sprint(other, s);
+		sprint(other, " health\n");
+		stuffcmd (other, "bf\n");
+		
+		self.nextthink = time + 5;
+		self.think = item_megahealth_rot;
+		other.items2 |= IT2_MEGAHEALTH;
+		other.megahealth_finished = time + 100;
+		other.megahealth_time = time + 5;
 	}
 	else
-	{
+	{	
+		sprint(other, "You receive ");
+		s = ftos(self.healamount);
+		sprint(other, s);
+		sprint(other, " health\n");
+		stuffcmd (other, "bf\n");
+	
 		if (deathmatch != 2)		// deathmatch 2 is the silly old rules
 		{
 			if (deathmatch)
@@ -213,21 +261,14 @@ void() health_touch =
 };	
 
 void() item_megahealth_rot =
-{
-	other = self.owner;
-	
-	if (other.health > other.max_health)
-	{
-		other.health = other.health - 1;
-		self.nextthink = time + 1;
-		return;
-	}
-	
+{	
 	if (deathmatch == 1)	// deathmatch 2 is silly old rules
 	{
 		self.nextthink = time + 20;
 		self.think = SUB_regen;
 	}
+	else
+		self.nextthink = -1;
 };
 
 /*
@@ -955,35 +996,29 @@ KEYS
 
 void() key_touch =
 {
-
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
 		return;
-	if (other.keys & self.keys)
+	if (other.items & self.items)
 		return;
 
-	if (self.keys == IT2_KEY1)
-		serverflags = serverflags + 1;
-	else 
-		serverflags = serverflags + 4;
+	sprint(other, "You got the ");
+	sprint(other, self.netname);
+	sprint(other,"\n");
 
-	sprint (other, "You got the ");
-	sprint (other, self.netname);
-	sprint (other,"\n");
-
-	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
-	stuffcmd (other, "bf\n");
-	other.keys = other.keys | self.keys;
+	sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
+	stuffcmd(other, "bf\n");
+	other.items = other.items | self.items;
 
 	if (!coop)
-	{	
+	{
 		self.solid = SOLID_NOT;
 		self.model = string_null;
 	}
 
 	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+	SUB_UseTargets(); // fire all targets / killtargets
 };
 
 
@@ -991,17 +1026,17 @@ void() key_setsounds =
 {
 	if (world.worldtype == 0)
 	{
-		precache_sound ("misc/medkey.wav");
+		precache_sound("misc/medkey.wav");
 		self.noise = "misc/medkey.wav";
 	}
 	if (world.worldtype == 1)
 	{
-		precache_sound ("misc/runekey.wav");
+		precache_sound("misc/runekey.wav");
 		self.noise = "misc/runekey.wav";
 	}
 	if (world.worldtype == 2)
 	{
-		precache_sound ("misc/basekey.wav");
+		precache_sound2 ("misc/basekey.wav");
 		self.noise = "misc/basekey.wav";
 	}
 };
@@ -1021,27 +1056,27 @@ void() item_key1 =
 {
 	if (world.worldtype == 0)
 	{
-		precache_model ("progs/w_s_key.mdl");
-		setmodel (self, "progs/w_s_key.mdl");
+		precache_model("progs/w_s_key.mdl");
+		setmodel(self, "progs/w_s_key.mdl");
 		self.netname = "silver key";
 	}
 	else if (world.worldtype == 1)
 	{
-		precache_model ("progs/m_s_key.mdl");
-		setmodel (self, "progs/m_s_key.mdl");
+		precache_model("progs/m_s_key.mdl");
+		setmodel(self, "progs/m_s_key.mdl");
 		self.netname = "silver runekey";
 	}
 	else if (world.worldtype == 2)
 	{
-		precache_model ("progs/b_s_key.mdl");
-		setmodel (self, "progs/b_s_key.mdl");
+		precache_model2 ("progs/b_s_key.mdl");
+		setmodel(self, "progs/b_s_key.mdl");
 		self.netname = "silver keycard";
 	}
 	key_setsounds();
 	self.touch = key_touch;
-	self.keys = IT2_KEY1;
-	setsize (self, '-16 -16 -24', '16 16 32');
-	StartItem ();
+	self.items = IT_KEY1;
+	setsize(self, '-16 -16 -24', '16 16 32');
+	StartItem();
 };
 
 /*QUAKED item_key2 (0 .5 .8) (-16 -16 -24) (16 16 32)
@@ -1059,27 +1094,27 @@ void() item_key2 =
 {
 	if (world.worldtype == 0)
 	{
-		precache_model ("progs/w_g_key.mdl");
-		setmodel (self, "progs/w_g_key.mdl");
+		precache_model("progs/w_g_key.mdl");
+		setmodel(self, "progs/w_g_key.mdl");
 		self.netname = "gold key";
 	}
 	if (world.worldtype == 1)
 	{
-		precache_model ("progs/m_g_key.mdl");
-		setmodel (self, "progs/m_g_key.mdl");
+		precache_model("progs/m_g_key.mdl");
+		setmodel(self, "progs/m_g_key.mdl");
 		self.netname = "gold runekey";
 	}
 	if (world.worldtype == 2)
 	{
-		precache_model ("progs/b_g_key.mdl");
-		setmodel (self, "progs/b_g_key.mdl");
+		precache_model2 ("progs/b_g_key.mdl");
+		setmodel(self, "progs/b_g_key.mdl");
 		self.netname = "gold keycard";
 	}
 	key_setsounds();
 	self.touch = key_touch;
-	self.keys = IT2_KEY2;
-	setsize (self, '-16 -16 -24', '16 16 32');
-	StartItem ();
+	self.items = IT_KEY2;
+	setsize(self, '-16 -16 -24', '16 16 32');
+	StartItem();
 };
 
 

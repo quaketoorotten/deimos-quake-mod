@@ -41,12 +41,6 @@ void() monster_use =
 		return;
 	if (self.health <= 0)
 		return;
-	if (activator.items & IT_INVISIBILITY)
-		return;
-	if (activator.flags & FL_NOTARGET)
-		return;
-	if (activator.classname != "player")
-		return;
 
 	if (self.spawnflags & TRIGGER_SPAWN)
 	{	
@@ -60,6 +54,13 @@ void() monster_use =
 			self.nextthink = time + 0.1;
 		return;
 	}
+	
+	if (activator.items & IT_INVISIBILITY)
+		return;
+	if (activator.flags & FL_NOTARGET)
+		return;
+	if (activator.classname != "player")
+		return;
 	
 // delay reaction so if the monster is teleported, its sound is still
 // heard
@@ -88,13 +89,17 @@ void() monster_death_use =
 		self.flags = self.flags - FL_SWIM;
 	
 	if (self.deathtarget)
+	{
 		self.target = self.deathtarget;
+		self.deathtarget = __NULL__;
+	}
 	
 	if (!self.target)
 		return;
 
 	activator = self.enemy;
 	SUB_UseTargets ();
+	self.target = __NULL__;
 };
 
 //============================================================================

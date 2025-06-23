@@ -32,6 +32,7 @@ void() W_Precache =
 	precache_sound ("weapons/tink1.wav");	// spikes tink (used in c code)
 	precache_sound ("weapons/grenade.wav");	// grenade launcher
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
+	precache_sound ("world/brkglas.wav");
 };
 
 float() crandom =
@@ -69,9 +70,6 @@ void (vector src, vector dir, float speed) CheckDodge =
 		if(targ.flags & FL_DODGED)
 			return;
 
-		if(targ.dodge_finished > time)
-			return;
-		
 		if(!targ.th_dodge || (targ.dodge_finished > time) )
 		{	
 			targ.flags = targ.flags | FL_STRAFE;
@@ -423,13 +421,23 @@ void() W_FireAxe =
 {
 	local	vector	source;
 	local	vector	org;
-	local float 	oldaxedmg;
+	local float		dmg = 25, kick = 5;
+	string punchnoise = "player/punch.wav";
 	
-	oldaxedmg = self.axedmg;
-
+	if (self.items2 & IT2_BERSERK && !(self.super_damage_finished))
+	{
+		kick = kick * 16;
+		dmg = ceil((dmg * 4) + (random()*100 % 35));
+		dprint(ftos(dmg));
+		dprint(" \n");
+		sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
+		punchnoise = "player/punch2.wav";
+		self.attack_finished = time + 0.45;
+	}
+	
 	makevectors (self.v_angle);
 	source = self.origin + '0 0 16';
-	traceline (source, source + v_forward*64, FALSE, self);
+	traceline (source, source + v_forward*54, 2, self);
 
 	if (trace_fraction == 1.0)
 		return;
@@ -445,24 +453,13 @@ void() W_FireAxe =
 		else	
 			SpawnBlood (org, '0 0 0', 73, 12*1.25);
 
-		if (!(self.flags & FL_ONGROUND) && (self.flags & FL_JUMPRELEASED) && (self.waterlevel < 2))
-			self.axedmg = oldaxedmg + (random() + random() + random())*25;
+		T_Damage (trace_ent, self, self, dmg, kick);
 
-		T_Damage (trace_ent, self, self, self.axedmg, 5);
-		dprint("axe dmg:");
-		dprint(ftos(self.axedmg));
-		dprint("\n");
-		
-		self.axedmg = oldaxedmg;
-		
-		if((trace_ent.flags & FL_MONSTER) || (trace_ent.movetype == MOVETYPE_WALK))
-			sound (self, CHAN_WEAPON, "zombie/z_miss.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+		sound (self, CHAN_WEAPON, punchnoise, 1, ATTN_NORM);
 	}
 	else
 	{	// hit wall
-		sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+		sound (self, CHAN_WEAPON, punchnoise, 1, ATTN_NORM);
 		//stuffcmd (self, "vibrate tactile/player/axhit2.bnvib");
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
@@ -1585,9 +1582,6 @@ An attack impulse can be triggered now
 ============
 */
 void()	player_axe1;
-void()	player_axeb1;
-void()	player_axec1;
-void()	player_axed1;
 void()	player_shot1; void()	player_sshot1;
 void()	player_plas1;
 void()	player_rocket1;
@@ -1596,8 +1590,6 @@ void() 	player_chngstart1  ; void() 	player_nail1;
 
 void() W_Attack =
 {
-	local float r;
-
 	if (!W_CheckNoAmmo ())
 		return;
 
@@ -1610,16 +1602,9 @@ void() W_Attack =
 	{
 		sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
 		//stuffcmd (self, "vibrate tactile/weapons/ax1.bnvib");
-		r = random();
-		if (r < 0.25)
-			player_axe1 ();
-		else if (r<0.5)
-			player_axeb1 ();
-		else if (r<0.75)
-			player_axec1 ();
-		else
-			player_axed1 ();
-		self.attack_finished = time + 0.5;
+		
+		player_axe1 ();
+		self.attack_finished = time + 0.36;
 	}
 	else if (self.weapon == IT_SHOTGUN)
 	{
@@ -1969,17 +1954,14 @@ void() CycleWeaponReverseCommand =
 
 /*
 ============
-ServerflagsCommand
+Cheats
 
 Just for development
 ============
 */
-void() ServerflagsCommand =
+void() KeysCheat =
 {
-	if(serverflags > 5)
-		return;
-	serverflags = serverflags * 4 + 1;
-	self.keys = self.keys | serverflags;
+	self.items = self.items | IT_KEY1 | IT_KEY2;
 };
 
 void() QuadCheat =
@@ -1989,6 +1971,14 @@ void() QuadCheat =
 	self.super_time = 1;
 	self.super_damage_finished = time + 30;
 	self.items = self.items | IT_QUAD;
+	dprint ("quad cheat\n");
+};
+
+void() BersCheat =
+{
+	if (deathmatch || coop)
+		return;
+	self.items2 = self.items2 | IT2_BERSERK;
 	dprint ("quad cheat\n");
 };
 
@@ -2006,11 +1996,13 @@ void() ImpulseCommands =
 	if (self.impulse == 10)
 		CycleWeaponCommand ();
 	if (self.impulse == 11)
-		ServerflagsCommand ();
+		KeysCheat ();
 	if (self.impulse == 12)
 		CycleWeaponReverseCommand ();
 	if (self.impulse == 13)
 		CheatCommand ();
+	if (self.impulse == 99)
+		BersCheat ();
 
 	if (self.impulse == 255)
 		QuadCheat ();

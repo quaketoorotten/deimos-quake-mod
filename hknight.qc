@@ -178,9 +178,9 @@ local float 	ldmg, kick;
 
 	if(uppercut == 1)
 	{
-		kick = 200;
+		kick = 100;
 		self.enemy.origin_z = self.enemy.origin_z + 30;
-		self.enemy.velocity_z = 400;
+		self.enemy.velocity_z = 600;
 
 		if(!(self.enemy.movetype & MOVETYPE_WALK))
 			self.enemy.flags = self.enemy.flags - (self.enemy.flags & FL_ONGROUND);
@@ -260,11 +260,8 @@ void()	hknight_die7	=[	105,	hknight_die8	] {ai_back(10);};
 void()	hknight_die8	=[	106,	hknight_die9	] {ai_back(10);};
 void()	hknight_die9	=[	107,	hknight_die10	] {};
 void()	hknight_die10	=[	108,	hknight_die11	] {};
-void()	hknight_die11	=[	109,	hknight_die12	] {};
-void()	hknight_die12	=[	110,	hknight_die12	] 
-{	
-	self.solid = SOLID_NOT; 
-};
+void()	hknight_die11	=[	109,	hknight_die12	] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	hknight_die12	=[	110,	hknight_die12	] {};
 
 
 void() hknight_die =

@@ -321,10 +321,8 @@ void()	ogre_die6	=[	68,	ogre_die7	] {};
 void()	ogre_die7	=[	69,	ogre_die8	] {};
 void()	ogre_die8	=[	70,	ogre_die9	] {};
 void()	ogre_die9	=[	71,	ogre_die10	] {};
-void()	ogre_die10	=[	72,	ogre_die11	] {};
-void()	ogre_die11	=[	73,	ogre_die11	] { 
-	self.solid = SOLID_NOT; 
-};
+void()	ogre_die10	=[	72,	ogre_die11	] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	ogre_die11	=[	73,	ogre_die11	] {};
 
 void()	ogre_bdie1	=[	74,	ogre_bdie2	] {};
 void()	ogre_bdie2	=[	75,	ogre_bdie3	] {ai_forward(5);};
@@ -334,10 +332,8 @@ void()	ogre_bdie5	=[	78,	ogre_bdie6	] {ai_forward(3);};
 void()	ogre_bdie6	=[	79,	ogre_bdie7	] {ai_forward(7);};
 void()	ogre_bdie7	=[	80,	ogre_bdie8	] {ai_forward(25);};
 void()	ogre_bdie8	=[	81,	ogre_bdie9	] {};
-void()	ogre_bdie9	=[	82,	ogre_bdie10	] {};
-void()	ogre_bdie10	=[	83,	ogre_bdie10	] {
-	self.solid = SOLID_NOT; 
-};
+void()	ogre_bdie9	=[	82,	ogre_bdie10	] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	ogre_bdie10	=[	83,	ogre_bdie10	] {};
 
 void()	ogre_duckdown1	=[	85,	ogre_duckdown2	] 
 {

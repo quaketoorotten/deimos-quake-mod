@@ -465,9 +465,11 @@ void() sham_pain7      =[      63, 	sham_run1       ] {};
 
 void(entity attacker, float damage)	sham_pain =
 {
-	if (self.health <= self.max_health / 2)
+	if ((self.health <= self.max_health / 2) && self.midpointtarg)
+	{
 		firebarontargs ();
-
+		self.midpointtarg = __NULL__;
+	}
 	if(self.health < self.max_health / 2)
 		self.skin = 1;
 
@@ -496,10 +498,8 @@ void() sham_death4      =[      67,     	sham_death5     ] {ai_back(14);};
 void() sham_death5      =[      68, 	sham_death6     ] {ai_back(20);};
 void() sham_death6      =[      69,       sham_death7     ] {ai_back(15);};
 void() sham_death7      =[      70,       sham_death8     ] {};
-void() sham_death8      =[      71,       sham_death9     ] {};
-void() sham_death9      =[      72,       sham_death9     ] {
-	self.solid = SOLID_NOT; 
-};
+void() sham_death8      =[      71,       sham_death9     ] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void() sham_death9      =[      72,       sham_death9     ] {};
 
 
 void() sham_die =

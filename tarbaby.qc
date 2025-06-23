@@ -142,7 +142,6 @@ void() monster_tarbaby =
 
 void() spawn_tbaby = 
 {
-	monster_tarbaby();
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_STEP;
 

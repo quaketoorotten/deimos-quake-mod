@@ -199,7 +199,7 @@ void()	enf_atk13	=[	36,	enf_atk14	] {ai_face(); enforcer_fire();};
 void()	enf_atk14	=[	37,	enf_run1	] {ai_face(); //sound (self, CHAN_VOICE, "weapons/chngnd1a.wav", 1, ATTN_NORM);
 };
 
-void()	enf_melee1	 	=[	68,	enf_melee2	] {ai_face(); sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);};
+void()	enf_melee1	 	=[	68,	enf_melee2	] {ai_face(); sound (self, CHAN_VOICE, "enforcer/woosh.wav", 1, ATTN_NORM);};
 void()	enf_melee2		=[	69,	enf_melee3	] {ai_face();};
 void()	enf_melee3		=[	70,	enf_melee4	] {ai_charge(5);};
 void()	enf_melee4		=[	71,	enf_melee5	] {ai_charge(8);enf_melee();};
@@ -284,10 +284,8 @@ void()	enf_fdie7	=[	49,	enf_fdie8	] {ai_forward(10);};
 void()	enf_fdie8	=[	50,	enf_fdie9	] {ai_forward(5);};
 void()	enf_fdie9	=[	51,	enf_fdie10	] {};
 void()	enf_fdie10	=[	52,	enf_fdie11	] {ai_forward(10);};
-void()	enf_fdie11	=[	53,	enf_fdie12	] {ai_forward(5);};
-void()	enf_fdie12	=[	54,	enf_fdie12	] {	
-	self.solid = SOLID_NOT; 
-};
+void()	enf_fdie11	=[	53,	enf_fdie12	] {ai_forward(5); self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	enf_fdie12	=[	54,	enf_fdie12	] {};
 
 void() enf_die =
 {
@@ -359,6 +357,7 @@ void() monster_enforcer =
 	precache_sound2 ("enforcer/sight2.wav");
 	precache_sound2 ("enforcer/sight3.wav");
 	precache_sound2 ("enforcer/sight4.wav");
+	precache_sound2 ("enforcer/woosh.wav");
 	
 	spawn_enf();
 };

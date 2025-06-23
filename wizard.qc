@@ -344,10 +344,8 @@ void()	wiz_death2	=[	47,		wiz_death3	] {};
 void()	wiz_death3	=[	48,		wiz_death4	] {};
 void()	wiz_death4	=[	49,		wiz_death5	] {};
 void()	wiz_death5	=[	51,		wiz_death6	] {};
-void()	wiz_death6	=[	52,		wiz_death7	] {};
-void()	wiz_death7	=[	53,		wiz_death7	] {
-	self.solid = SOLID_NOT; 
-};
+void()	wiz_death6	=[	52,		wiz_death7	] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	wiz_death7	=[	53,		wiz_death7	] {};
 
 void() wiz_die =
 {

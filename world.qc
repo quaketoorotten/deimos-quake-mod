@@ -240,8 +240,8 @@ void() worldspawn =
 
 // ax sounds	
 	precache_sound ("weapons/ax1.wav");			// ax swoosh
-	precache_sound ("player/axhit1.wav");		// ax hit meat
-	precache_sound ("player/axhit2.wav");		// ax hit world
+	precache_sound ("player/punch.wav");		// ax hit meat
+	precache_sound ("player/punch2.wav");		// ax hit world
 
 	precache_sound ("player/h2ojump.wav");		// player jumping into water
 	precache_sound ("player/slimbrn2.wav");		// player enter slime

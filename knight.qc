@@ -136,10 +136,8 @@ void()	knight_die5	=[	71,	knight_die6	] {};
 void()	knight_die6	=[	72,	knight_die7	] {};
 void()	knight_die7	=[	73,	knight_die8	] {};
 void()	knight_die8	=[	74,	knight_die9	] {};
-void()	knight_die9	=[	75,	knight_die10] {};
-void()	knight_die10=[	76,	knight_die10] {
-	self.solid = SOLID_NOT; 
-};
+void()	knight_die9	=[	75,	knight_die10] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	knight_die10=[	76,	knight_die10] {};
 
 
 void()	knight_dieb1	=[	77,	knight_dieb2	] {};
@@ -149,10 +147,8 @@ void()	knight_dieb4	=[	80,	knight_dieb5	] {};
 void()	knight_dieb5	=[	81,	knight_dieb6	] {};
 void()	knight_dieb6	=[	82,	knight_dieb7	] {};
 void()	knight_dieb7	=[	83,	knight_dieb8	] {};
-void()	knight_dieb8	=[	84,	knight_dieb9	] {};
-void()	knight_dieb9 = [	85,	knight_dieb9] {
-	self.solid = SOLID_NOT; 
-};
+void()	knight_dieb8	=[	84,	knight_dieb9	] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	knight_dieb9 = [	85,	knight_dieb9] {};
 
 
 void() knight_die =

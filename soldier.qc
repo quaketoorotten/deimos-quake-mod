@@ -265,11 +265,8 @@ void()	army_die5	=[	91,	army_die6	] {ai_back(3); };
 void()	army_die6	=[	92,	army_die7	] {ai_back(4); };
 void()	army_die7	=[	93,	army_die8	] {};
 void()	army_die8	=[	94,	army_die9	] {};
-void()	army_die9	=[	95,	army_die10	] {};
-void()	army_die10	=[	96,	army_die10	]
-{
-	self.solid = SOLID_NOT; 
-};
+void()	army_die9	=[	95,	army_die10	] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	army_die10	=[	96,	army_die10	] {};
 
 void()	army_cdie1	=[	98,	army_cdie2	] 
 {
@@ -288,11 +285,8 @@ void()	army_cdie6	=[	102,	army_cdie7	] {ai_forward(4);};
 void()	army_cdie7	=[	103,	army_cdie8	] {};
 void()	army_cdie8	=[	104,	army_cdie9	] {};
 void()	army_cdie9	=[	105,	army_cdie10	] {};
-void()	army_cdie10	=[	106,	army_cdie11	] {};
-void()	army_cdie11	=[	107,	army_cdie11	]
-{
-	self.solid = SOLID_NOT; 
-};
+void()	army_cdie10	=[	106,	army_cdie11	] {self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	army_cdie11	=[	107,	army_cdie11	] {};
 
 
 void() army_die =

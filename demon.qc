@@ -156,18 +156,18 @@ void()	demon1_madchrge5	=[	32,		demon1_madchrge6	] {ai_face();};
 void()	demon1_madchrge6	=[	29,		demon1_madchrge7	] {ai_face();};
 void()	demon1_madchrge7	=[	30,		demon1_madchrge8	] {ai_face(); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM);};
 void()	demon1_madchrge8	=[	31,		demon1_madchrge9	] {ai_face();};
-void()	demon1_madchrge9	=[	22,		demon1_madchrge10	] {ai_charge(70); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM);};
-void()	demon1_madchrge10	=[	23,		demon1_madchrge11	] {ai_charge(76); Demon_Melee ((random() + random() + random()) * 7);};
-void()	demon1_madchrge11	=[	24,		demon1_madchrge12	] {ai_charge(78); Demon_Melee ((random() + random() + random()) * 7);};
-void()	demon1_madchrge12	=[	25,		demon1_madchrge13	] {ai_charge(76); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM);};
-void()	demon1_madchrge13	=[	26,		demon1_madchrge14	] {ai_charge(71); Demon_Melee ((random() + random() + random()) * 7);};
-void()	demon1_madchrge14	=[	27,		demon1_madchrge15	] {ai_charge(70); Demon_Melee ((random() + random() + random()) * 7);};
-void()	demon1_madchrge15	=[	22,		demon1_madchrge16	] {ai_charge(76); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM);};
-void()	demon1_madchrge16	=[	23,		demon1_madchrge17	] {ai_charge(78); Demon_Melee ((random() + random() + random()) * 7);};
-void()	demon1_madchrge17	=[	24,		demon1_madchrge18	] {ai_charge(76); Demon_Melee ((random() + random() + random()) * 7);};
-void()	demon1_madchrge18	=[	25,		demon1_madchrge19	] {ai_charge(71); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM); };
+void()	demon1_madchrge9	=[	22,		demon1_madchrge10	] {ai_charge(60); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM);};
+void()	demon1_madchrge10	=[	23,		demon1_madchrge11	] {ai_charge(66); Demon_Melee ((random() + random() + random()) * 7);};
+void()	demon1_madchrge11	=[	24,		demon1_madchrge12	] {ai_charge(68); Demon_Melee ((random() + random() + random()) * 7);};
+void()	demon1_madchrge12	=[	25,		demon1_madchrge13	] {ai_charge(66); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM);};
+void()	demon1_madchrge13	=[	26,		demon1_madchrge14	] {ai_charge(61); Demon_Melee ((random() + random() + random()) * 7);};
+void()	demon1_madchrge14	=[	27,		demon1_madchrge15	] {ai_charge(60); Demon_Melee ((random() + random() + random()) * 7);};
+void()	demon1_madchrge15	=[	22,		demon1_madchrge16	] {ai_charge(66); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM);};
+void()	demon1_madchrge16	=[	23,		demon1_madchrge17	] {ai_charge(68); Demon_Melee ((random() + random() + random()) * 7);};
+void()	demon1_madchrge17	=[	24,		demon1_madchrge18	] {ai_charge(64); Demon_Melee ((random() + random() + random()) * 7);};
+void()	demon1_madchrge18	=[	25,		demon1_madchrge19	] {ai_charge(61); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM); };
 void()	demon1_madchrge19	=[	27,		demon1_run1	      ] 
-{self.th_dodge = 0; SUB_AttackFinishedSpecial (self, 1);};
+{ai_charge(61); self.th_dodge = 0; SUB_AttackFinishedSpecial (self, 1);};
 
 void()	demon1_pain1	=[	48,		demon1_pain2	] {};
 void()	demon1_pain2	=[	49,		demon1_pain3	] {ai_pain(13);};
@@ -206,10 +206,8 @@ void(entity attacker, float damage)	demon1_pain =
 void()	demon1_die4		=[	57,		demon1_die5	] {};
 void()	demon1_die5		=[	58,		demon1_die6	] {ai_back(9);};
 void()	demon1_die6		=[	59,		demon1_die7	] {ai_back(12);};
-void()	demon1_die7		=[	60,		demon1_die8	] {ai_back(7); };
-void()	demon1_die8		=[	61,		demon1_die8	] {
-	self.solid = SOLID_NOT; 
-};
+void()	demon1_die7		=[	60,		demon1_die8	] {ai_back(7); self.solid = SOLID_NOT; setorigin(self, self.origin);};
+void()	demon1_die8		=[	61,		demon1_die8	] {};
 
 
 
@@ -311,7 +309,7 @@ float()	CheckDemonJump =
 		
 	if (d > 900)
 	{
-		if (random() < 0.6)
+		if (random() <= 0.6)
 			return FALSE;
 	}
 		
@@ -331,7 +329,10 @@ float()	CheckDemonMadCharge =
 		
 	if ( vlen (self.origin - self.enemy.origin) > 400 )
 		return FALSE;
-		
+	
+	if (random() <= 0.5)
+		return FALSE;	
+	
 	return TRUE;
 };
 

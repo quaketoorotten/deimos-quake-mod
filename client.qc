@@ -42,17 +42,14 @@ void() SetChangeParms =
 	self.items = self.items - (self.items & 
 	(IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
 	
-	self.keys = self.keys - (self.keys & 
-	(IT2_KEY1 | IT2_KEY2) );
+	self.items2 = self.items2 - (self.items2 & 
+	(IT2_MEGAHEALTH | IT2_BERSERK) );
 	
 // cap super health
 	if (self.health > 100)
 		self.health = 100;
 	if (self.health < 50)
 		self.health = 50;
-// cap axe damage becus berserk
-	if (self.axedmg > 70)
-		self.axedmg = 70;
 	
 	parm1 = self.items;
 	parm2 = self.health;
@@ -67,7 +64,6 @@ void() SetChangeParms =
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 	parm10 = self.armorbit;
-	parm11 = self.axedmg;
 	TE_BFGEXPLOD_CNT = 0;
 };
 
@@ -83,7 +79,7 @@ void() SetNewParms =
 	parm8 = 4096;
 	parm9 = 0;
 	parm10 = 0;
-	parm11 = 45;
+	parm11 = 0.4;
 	TE_BFGEXPLOD_CNT = 0;
 };
 
@@ -102,7 +98,6 @@ void() DecodeLevelParms =
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
 	self.armorbit = parm10;
-	self.axedmg = parm11;
 	serverflags = 0;
 	TE_BFGEXPLOD_CNT = 0;
 };
@@ -497,9 +492,12 @@ void() PutClientInServer =
 	self.air_finished = time + 12;
 	self.dmg = 2;   		// initial water damage
 	self.super_damage_finished = 0;
+	self.megahealth_finished = 0;
+	self.berserk_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
 	self.invincible_finished = 0;
+	self.dspeed = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
 
@@ -1079,6 +1077,49 @@ void() CheckPowerups =
 		}
 	}	
 
+	if (self.megahealth_finished)
+	{	
+		if (self.health <= self.max_health)
+		{	// just stopped
+			self.items2 &= ~ IT2_MEGAHEALTH;
+			self.megahealth_finished = 0;
+			self.megahealth_time = 0;
+		}
+
+		if (self.megahealth_time < time && self.health > self.max_health && self.dspeed < time)
+		{
+			self.health = self.health - 1;
+			self.dspeed = time + 1.3;
+		}
+	}
+	
+	/*
+	if (self.berserk_finished)
+	{	
+		// sound and screen flash when items starts to "run" out
+		
+		if (self.berserk_finished < time + 3)
+		{
+			if (self.berserk_time == 1)
+			{
+				stuffcmd (self, "bf\n");
+				self.berserk_time = time + 1;
+			}	  
+			
+			if (self.berserk_time < time)
+			{
+				self.berserk_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+		
+		if (self.berserk_finished < time)
+		{	// just stopped
+			self.berserk_finished = 0;
+			self.berserk_time = 0;
+			stuffcmd (self, "v_cshift 0 0 0 0\n");
+		}
+	}*/
 };
 
 

@@ -416,8 +416,6 @@ void() traplaser_use =
 	local vector p1, p2;
 	
 	p1 = self.origin;
-
-	self.enemy = find(world, targetname, self.target);
 	
 	if ( (self.enemy.flags & FL_MONSTER) )
 		return;
@@ -429,27 +427,12 @@ void() traplaser_use =
 
 	ignore = self;
 
-	sound (self, CHAN_AUTO, "weapons/lhit.wav", 1, ATTN_STATIC);
-
-	if (checkclient())
-	{
-		while(ignore)
-		{
-			traceline (from, end, 2, ignore);
-
-			if (!trace_ent)
-				break;
-		
-			if((trace_ent != self.owner) && (trace_ent.takedamage))
-			{	
-				local entity targ = trace_ent;
-				T_Damage (targ, self, self, self.dmg, 0);
-				particle (targ.origin, '0 0 100', 225, self.dmg* 8);
-			}
-			
-			ignore = trace_ent;
-			from = trace_endpos;
-		}
+	if (!checkclient())
+		return;
+	
+	if(self.dmg <= 0)
+	{		
+		traceline (from, end, 2, ignore);
 			
 		WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
 
@@ -460,10 +443,48 @@ void() traplaser_use =
 		else
 			WriteByte(MSG_BROADCAST, 13);	
 		
+		WriteEntity(MSG_BROADCAST, self);
+   		WriteCoord(MSG_BROADCAST, from_x);
+   		WriteCoord(MSG_BROADCAST, from_y);
+   		WriteCoord(MSG_BROADCAST, from_z);
+   	 	WriteCoord (MSG_BROADCAST, trace_endpos_x);
+		WriteCoord (MSG_BROADCAST, trace_endpos_y);
+		WriteCoord (MSG_BROADCAST, trace_endpos_z);
+	
+		return;
+	}
+
+	while(ignore)
+	{
+		traceline (from, end, 2, ignore);
+	
+		if (!trace_ent)
+			break;
+	
+		if((trace_ent != self.owner) && (trace_ent.takedamage))
+		{	
+			local entity targ = trace_ent;
+			T_Damage (targ, self, self, self.dmg, 0);
+			particle (targ.origin, '0 0 100', 225, self.dmg* 8);
+			sound (self, CHAN_AUTO, "weapons/lhit.wav", 1, ATTN_STATIC);
+		}
+		
+		ignore = trace_ent;
+		from = trace_endpos;
+	
+		WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
+
+		if(self.spawnflags & SPAWNFLAG_BLUE)
+			WriteByte(MSG_BROADCAST, 5);
+		else if(self.spawnflags & SPAWNFLAG_RED)
+			WriteByte(MSG_BROADCAST, 6);	
+		else
+			WriteByte(MSG_BROADCAST, 13);	
+		
    		WriteEntity(MSG_BROADCAST, self);
-   		WriteCoord(MSG_BROADCAST, p1_x);
-   		WriteCoord(MSG_BROADCAST, p1_y);
-   		WriteCoord(MSG_BROADCAST, p1_z);
+   		WriteCoord(MSG_BROADCAST, from_x);
+   		WriteCoord(MSG_BROADCAST, from_y);
+   		WriteCoord(MSG_BROADCAST, from_z);
    	 	WriteCoord (MSG_BROADCAST, trace_endpos_x);
 		WriteCoord (MSG_BROADCAST, trace_endpos_y);
 		WriteCoord (MSG_BROADCAST, trace_endpos_z);
@@ -483,6 +504,7 @@ void() traplaser_stop =
 
 void() trap_laser = 
 {			
+	self.enemy = find(world, targetname, self.target);
 	self.use = traplaser_use;
 	self.solid = SOLID_NOT;
 };
@@ -709,10 +731,15 @@ void() breakable_explode =
 	
 	SUB_UseTargets();
 
-	if((self.spawnflags & GLASS))
-		sound (self, CHAN_AUTO, "world/brkglas.wav", 1, ATTN_NORM);
+	local entity e = spawn();
+	e.origin = org;
+
+	if(self.mdl == "maps/debri.bsp")
+		sound (e, CHAN_AUTO, "world/brkglas.wav", 1, ATTN_NORM);
 	else
-		sound (self, CHAN_AUTO, "weapons/r_exp3.wav", 1, ATTN_NORM);		
+		sound (e, CHAN_AUTO, "weapons/r_exp3.wav", 1, ATTN_NORM);	
+
+	remove(e);	
 	
 	if(self.mass <= 0 && (self.mdl == "maps/debri.bsp" || self.mdl == "maps/debri2.bsp"))
 		self.mass = 8;
@@ -753,15 +780,14 @@ void() func_breakable =
 	self.th_die = breakable_explode;
 	
 	if(self.spawnflags & GLASS)
-	{
-		precache_sound ("world/brkglas.wav");
-		self.mdl = "maps/debri.bsp";
+	{	
 		precache_model ("maps/debri.bsp");
+		self.mdl = "maps/debri.bsp";
 	}
 	else if(self.spawnflags & METAL)
-	{
-		self.mdl = "maps/debri2.bsp";
+	{	
 		precache_model ("maps/debri2.bsp");
+		self.mdl = "maps/debri2.bsp";
 	}
 
 	self.takedamage = DAMAGE_YES;
@@ -896,10 +922,6 @@ void() ambient_radio2 =
 	ambientsound (self.origin, "ambience/radio3.wav", 1, ATTN_STATIC);
 };
 
-void() ambient_noisemaker =
-{
-	trigger_noisemaker ();
-};
 
 //============================================================================
 // GIBS//
@@ -1113,10 +1135,10 @@ void() func_corpse =
      			self.frame = 84;	
 			break;
 		case 4:
-     			self.frame = 93;	
+     			self.frame = 85;	
 			break;
 		case 5:
-     			self.frame = 102;
+     			self.frame = 86;
 			break;
    		default:
      			self.frame = 49;

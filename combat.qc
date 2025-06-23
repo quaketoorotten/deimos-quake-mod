@@ -194,20 +194,17 @@ void(entity targ, entity inflictor, entity attacker, float damage, float kick) T
 
 	// figure momentum add
 	
-	if (targ.mass == 0)
-		kick = 0;
-
-	else if ((targ.movetype != MOVETYPE_PUSH) && (targ.movetype != MOVETYPE_NONE))
+	if ((targ.mass > 0) && (targ.movetype != MOVETYPE_PUSH))
 	{
-		if(kick > 0)
+		if(kick && !(targ.flags & FL_DODGED))
 		{
 			local vector dir = ((targ.maxs - targ.mins) * 0.5 + targ.absmin) - ((inflictor.maxs - inflictor.mins) * 0.5 + inflictor.absmin);
 			dir = normalize(dir);
-
-			if((checkbottom(targ)) && (targ.flags & FL_MONSTER))
+	
+			if((checkbottom(targ)) && (targ.flags & FL_MONSTER) && !(targ.flags & FL_FLY))
 			{
 				targ.flags = targ.flags - (targ.flags & FL_ONGROUND);
-				targ.velocity_z = targ.velocity_z + vlen(dir* (500.0 * kick / targ.mass ) )*0.3;
+				targ.velocity_z = targ.velocity_z + vlen(dir) * (500.0 * kick / targ.mass );
 			}
 
 			if ((targ.flags & FL_CLIENT) && attacker == targ)

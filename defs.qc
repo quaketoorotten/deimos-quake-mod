@@ -307,6 +307,9 @@ float	IT_ARMOR3				= 32768;
 // why is this even declared?
 //float	IT_SUPERHEALTH			= 65536;
 
+float	IT_KEY1					= 131072;
+float	IT_KEY2					= 262144;
+
 float	IT_INVISIBILITY			= 524288;
 float	IT_INVULNERABILITY		= 1048576;
 float	IT_SUIT					= 2097152;
@@ -701,12 +704,10 @@ float(entity targ, entity inflictor) CanDamage;
 .void() th_dodge;
 // .void() bfglsr_org;
 
-.float knockback;
 .float shotcount;
 .float fastspin;
-.float axedmg;
 
-.float dspeed; // dodge speed for anims
+.float dspeed; // dodge speed for anims, control how fast megahealth drains
 
 .float dodge_finished;
 // .float dmg_time;
@@ -717,13 +718,18 @@ float(entity targ, entity inflictor) CanDamage;
 .void()  th_spawn;
 .string deathtarget;
 
-// store them keys, cus i dont like the hipnotic keys placement
-.float keys;
+.float megahealth_finished;
+.float megahealth_time;
 
-// new keys
-float	IT2_KEY1					= 1; 
-float	IT2_KEY2					= 4;
+.float berserk_finished;
+.float berserk_time;
 
+// store them new items
+.float items2;
+
+// new items
+float	IT2_BERSERK					= 2; 
+float	IT2_MEGAHEALTH				= 4;
 
 .float color;
 

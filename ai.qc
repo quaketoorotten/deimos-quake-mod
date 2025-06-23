@@ -996,7 +996,7 @@ void(float dist) ai_run =
 	
 	if((self.aiflags & AI_LOST_SIGHT))
 	{		
-		traceline(self.origin, self.last_sighting, 2, self); // pray for quakec tracebox
+		traceline(self.origin, self.last_sighting, 0, self); // pray for quakec tracebox
 	
 		if(trace_fraction < 1)
 		{	
