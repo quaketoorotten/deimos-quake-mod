@@ -104,7 +104,7 @@ void() enforcer_fire =
  
 	sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
 	
-	FireBullets (2, dir, '0.02 0.04 0', num, 0);
+	FirePallets (2, dir, '0.02 0.04 0', num, 0, TE_GUNSHOT);
 };
 
 void() enf_melee =
@@ -121,9 +121,11 @@ local float 	ldmg;
 	delta = self.enemy.origin - self.origin;
 
 	if (vlen(delta) > 90)
+	{	
+		sound (self, CHAN_BODY, "enforcer/woosh.wav", 1, ATTN_NORM);
 		return;
-		
-	sound (self, CHAN_AUTO, "weapons/tink1.wav", 1, ATTN_NORM);	
+	}
+	sound (self, CHAN_BODY, "weapons/tink1.wav", 1, ATTN_NORM);	
 	
 	ldmg = (random() + random() + random()) * 8;
 	T_Damage (self.enemy, self, self, ldmg, 25);
@@ -199,7 +201,7 @@ void()	enf_atk13	=[	36,	enf_atk14	] {ai_face(); enforcer_fire();};
 void()	enf_atk14	=[	37,	enf_run1	] {ai_face(); //sound (self, CHAN_VOICE, "weapons/chngnd1a.wav", 1, ATTN_NORM);
 };
 
-void()	enf_melee1	 	=[	68,	enf_melee2	] {ai_face(); sound (self, CHAN_VOICE, "enforcer/woosh.wav", 1, ATTN_NORM);};
+void()	enf_melee1	 	=[	68,	enf_melee2	] {ai_face();};
 void()	enf_melee2		=[	69,	enf_melee3	] {ai_face();};
 void()	enf_melee3		=[	70,	enf_melee4	] {ai_charge(5);};
 void()	enf_melee4		=[	71,	enf_melee5	] {ai_charge(8);enf_melee();};
@@ -319,14 +321,6 @@ void() enf_die =
 	self.movetype = MOVETYPE_TOSS;
 	self.takedamage = DAMAGE_YES;
 	self.skin = 1;
-
-	if(self.spawnflags & DROP_AMMO)
-	{
-		if(self.ammo_nails <= 0)
-			self.ammo_nails = 5; 
-
-		DropBackpack();
-	}
 	
 	enf_fdie1 ();
 

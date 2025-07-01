@@ -117,7 +117,7 @@ void(float ldmg)	Demon_Melee =
 
 	delta = self.enemy.origin - self.origin;
 
-	if (vlen(delta) > 100)
+	if (vlen(delta) >= 85)
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
@@ -167,7 +167,7 @@ void()	demon1_madchrge16	=[	23,		demon1_madchrge17	] {ai_charge(68); Demon_Melee
 void()	demon1_madchrge17	=[	24,		demon1_madchrge18	] {ai_charge(64); Demon_Melee ((random() + random() + random()) * 7);};
 void()	demon1_madchrge18	=[	25,		demon1_madchrge19	] {ai_charge(61); Demon_Melee ((random() + random() + random()) * 7); sound (self, CHAN_VOICE, "demon/dland2.wav", 1, ATTN_NORM); };
 void()	demon1_madchrge19	=[	27,		demon1_run1	      ] 
-{ai_charge(61); self.th_dodge = 0; SUB_AttackFinishedSpecial (self, 1);};
+{ai_charge(61); self.th_dodge = 0; SUB_AttackFinishedSpecial (self, 1 + random()*2.4);};
 
 void()	demon1_pain1	=[	48,		demon1_pain2	] {};
 void()	demon1_pain2	=[	49,		demon1_pain3	] {ai_pain(13);};
@@ -416,7 +416,7 @@ void() spawn_demon1 =
 	self.health = 475;
 	self.max_health = 475;
 	self.skin = 0;
-	self.mass = 350;
+	self.mass = 400;
 
 	self.th_stand = demon1_stand1;
 	self.th_walk = demon1_walk1;

@@ -22,15 +22,14 @@ void()	tbaby_walk2	=[	4,		tbaby_walk2	] {ai_walk(5);};
 void()	tbaby_walk3	=[	5,		tbaby_walk3	] {ai_walk(2);};
 void()	tbaby_walk4	=[	6,		tbaby_walk4	] {ai_walk(4);};
 void()	tbaby_walk5	=[	7,		tbaby_walk5	] {ai_walk(6);};
-void()	tbaby_walk6	=[	8,		tbaby_walk6	] {ai_walk(1);};
 
 
-void()	tbaby_run1	=[	9,		tbaby_run2	] {ai_run(20);};
-void()	tbaby_run2	=[	10,		tbaby_run3	] {ai_run(20);};
-void()	tbaby_run3	=[	11,		tbaby_run4	] {ai_run(20);};
-void()	tbaby_run4	=[	12,		tbaby_run5	] {ai_run(20);};
-void()	tbaby_run5	=[	13,		tbaby_run6	] {ai_run(20);};
-void()	tbaby_run6	=[	14,		tbaby_run1	] {ai_run(20);};
+void()	tbaby_run1	=[	8,		tbaby_run2	] {ai_run(20);};
+void()	tbaby_run2	=[	9,		tbaby_run3	] {ai_run(20);};
+void()	tbaby_run3	=[	10,		tbaby_run4	] {ai_run(20);};
+void()	tbaby_run4	=[	11,		tbaby_run5	] {ai_run(20);};
+void()	tbaby_run5	=[	12,		tbaby_run6	] {ai_run(20);};
+void()	tbaby_run6	=[	13,		tbaby_run1	] {ai_run(20);};
 
 
 //============================================================================
@@ -67,19 +66,19 @@ void() tbaby_melee =
 
 	self.dmgtime = time + 0.33;
 		
-	if (other.takedamage)
+	if (other.takedamage && other.classname != self.classname)
 	{
 		ldmg = 10 + 10*random();
 		T_Damage (other, self, self, ldmg, 2);	
-		sound (self, CHAN_VOICE, "blob/hit1.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "player/punch.wav", 1, ATTN_NORM);
 	}	
 };
 
 
-void() tbaby_leap1	=[	15 ,		tbaby_leap2	] {ai_face(); };
-void() tbaby_leap2	=[	16 ,		tbaby_leap3	] {ai_face(); };
-void() tbaby_leap3	=[	17 ,		tbaby_leap4	] {ai_face(); self.ltime = time + 1; };
-void() tbaby_leap4	=[	18 ,		tbaby_leap5	] 
+void() tbaby_leap1	=[	14 ,		tbaby_leap2	] {ai_face(); };
+void() tbaby_leap2	=[	15 ,		tbaby_leap3	] {ai_face(); };
+void() tbaby_leap3	=[	16 ,		tbaby_leap4	] {ai_face(); self.ltime = time + 1; };
+void() tbaby_leap4	=[	17 ,		tbaby_leap5	] 
 {
 	ai_face();
 	self.movetype = MOVETYPE_FLY;	
@@ -91,19 +90,19 @@ void() tbaby_leap4	=[	18 ,		tbaby_leap5	]
 	self.angles = vectoangles(dir);
 	self.touch = tbaby_melee;
 };
-void() tbaby_leap5	=[	19 ,		tbaby_leap6	] {ai_face(); };
-void() tbaby_leap6	=[	20 ,		tbaby_leap7	] {ai_face(); };
-void() tbaby_leap7	=[	21 ,		tbaby_leap8	] {ai_face(); };
-void() tbaby_leap8	=[	22 ,		tbaby_leap4	] {ai_face(); CheckContinueCharge2();};
+void() tbaby_leap5	=[	18 ,		tbaby_leap6	] {ai_face(); };
+void() tbaby_leap6	=[	19 ,		tbaby_leap7	] {ai_face(); };
+void() tbaby_leap7	=[	20 ,		tbaby_leap8	] {ai_face(); };
+void() tbaby_leap8	=[	21 ,		tbaby_leap4	] {ai_face(); CheckContinueCharge2();};
 
 
 
 //=============================================================================
 
-void()	tbaby_die1	=[	23,		tbaby_die2	] {self.takedamage = DAMAGE_NO; self.nextthink = 0.2;};
-void()	tbaby_die2	=[	24,		tbaby_die3	] {self.nextthink = 0.35;};
+void()	tbaby_die1	=[	22,		tbaby_die2	] {self.takedamage = DAMAGE_NO; self.nextthink = 0.2;};
+void()	tbaby_die2	=[	23,		tbaby_die3	] {self.nextthink = 0.35;};
 
-void()	tbaby_die3	=[	24,		tbaby_run1	]
+void()	tbaby_die3	=[	23,		tbaby_run1	]
 {
 	sound (self, CHAN_VOICE, "blob/death1.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -117,6 +116,9 @@ void()	tbaby_die3	=[	24,		tbaby_run1	]
 	self.cnt = 1;
 	BecomeExplosion ();
 };
+
+void(entity attacker, float damage) tbaby_pain1 =[ 0, tbaby_pain2 ] {self.pain_finished = time + 0.45; sound (self, CHAN_VOICE, "blob/pain1.wav", 1, ATTN_NORM); }
+void() tbaby_pain2 =[ 24, tbaby_run1 ] { };
 
 //=============================================================================
 
@@ -133,8 +135,7 @@ void() monster_tarbaby =
 	precache_model ("progs/tarbaby.mdl");
 
 	precache_sound ("blob/death1.wav");
-	precache_sound ("blob/hit1.wav");
-	precache_sound ("blob/land1.wav");
+	precache_sound ("blob/pain1.wav");
 	precache_sound ("blob/sight1.wav");
 	
 	spawn_tbaby();
@@ -151,7 +152,7 @@ void() spawn_tbaby =
 	self.health = 45;
 	self.max_health = 45;
 	self.mass = 0;
-
+	self.color = 233;
 	self.th_stand = tbaby_stand1;
 	self.th_walk = tbaby_walk1;
 	self.th_run = tbaby_run1;
@@ -159,6 +160,7 @@ void() spawn_tbaby =
 	self.th_melee = tbaby_leap1;
 	self.th_missile = tbaby_leap1;
 	self.th_spawn = spawn_tbaby;
+	self.th_pain = tbaby_pain1;
 	
 	flymonster_start ();
 }

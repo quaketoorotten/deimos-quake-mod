@@ -347,7 +347,7 @@ float	SVC_SELLSCREEN		= 33;
 
 
 float	TE_SPIKE		= 0;
-float	TE_SUPERSPIKE	= 1;
+float	TE_SHOTGUN_SHOT	= 1;
 float	TE_GUNSHOT		= 2;
 float	TE_EXPLOSION	= 3;
 float	TE_TAREXPLOSION	= 4;
@@ -706,6 +706,7 @@ float(entity targ, entity inflictor) CanDamage;
 
 .float shotcount;
 .float fastspin;
+.float spinspeed;
 
 .float dspeed; // dodge speed for anims, control how fast megahealth drains
 
@@ -722,7 +723,7 @@ float(entity targ, entity inflictor) CanDamage;
 .float megahealth_time;
 
 .float berserk_finished;
-.float berserk_time;
+//.float berserk_time;
 
 // store them new items
 .float items2;
@@ -741,10 +742,8 @@ vector	VEC_HULL3_MAX = '32 32 64';
 vector	VEC_HULL4_MIN = '-64 -64 -24';
 vector	VEC_HULL4_MAX = '64 64 128';
 
-float	DROP_AMMO					= 2;
-
 float TE_BFGEXPLOD_CNT;
-float TE_BFGEXPLOD_LIMIT = 30;
+float TE_BFGEXPLOD_LIMIT = 15;
 
 .float aiflags;
 .vector last_sighting;

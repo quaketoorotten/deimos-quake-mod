@@ -500,6 +500,7 @@ void() PutClientInServer =
 	self.dspeed = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
+	self.spinspeed = 1;
 
 	DecodeLevelParms ();
 	
@@ -1092,34 +1093,35 @@ void() CheckPowerups =
 			self.dspeed = time + 1.3;
 		}
 	}
-	
-	/*
+	if (self.megahealth_finished)
+	{	
+		if (self.health <= self.max_health)
+		{	// just stopped
+			self.items2 &= ~ IT2_MEGAHEALTH;
+			self.megahealth_finished = 0;
+			self.megahealth_time = 0;
+		}
+
+		if (self.megahealth_time < time && self.health > self.max_health && self.dspeed < time)
+		{
+			self.health = self.health - 1;
+			self.dspeed = time + 1.3;
+		}
+	}
 	if (self.berserk_finished)
 	{	
-		// sound and screen flash when items starts to "run" out
-		
-		if (self.berserk_finished < time + 3)
-		{
-			if (self.berserk_time == 1)
-			{
-				stuffcmd (self, "bf\n");
-				self.berserk_time = time + 1;
-			}	  
-			
-			if (self.berserk_time < time)
-			{
-				self.berserk_time = time + 1;
-				stuffcmd (self, "bf\n");
-			}
-		}
-		
-		if (self.berserk_finished < time)
+		if (self.health >= self.max_health + 25)
 		{	// just stopped
 			self.berserk_finished = 0;
-			self.berserk_time = 0;
-			stuffcmd (self, "v_cshift 0 0 0 0\n");
+			//self.berserk_time = 0;
 		}
-	}*/
+
+		if ((self.health < self.max_health + 25) && self.dspeed < time)
+		{
+			self.health = self.health + 1;
+			self.dspeed = time;
+		}
+	}
 };
 
 

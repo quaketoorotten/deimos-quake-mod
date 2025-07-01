@@ -176,7 +176,12 @@ void() MagicTouch =
 };
 
 void(vector org, vector dir) launch_magic=
-{
+{	
+	local float speed = 1000;
+	
+	if (skill <= 1)
+		speed = 900;	
+	
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLYMISSILE;
@@ -191,9 +196,7 @@ void(vector org, vector dir) launch_magic=
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	setorigin (newmis, org);
 
-	if(skill <= 1) newmis.velocity = dir * 900;
-	else newmis.velocity = dir * 1000;
-	newmis.dmg = 75;
+	newmis.velocity = dir * speed;
 
 	newmis.touch = MagicTouch;
 };
@@ -511,10 +514,10 @@ void() sham_die =
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_shams.mdl", self.health);
 		//for(float i = 0; i < 4; i++)
-			ThrowGib ("progs/gib1_green.mdl", self.health);
-		ThrowGib ("progs/gib2_green.mdl", self.health);
-		//for(float i = 0; i < 8; i++)
-			ThrowGib ("progs/gib3_green.mdl", self.health);
+			ThrowGib ("progs/gib1.mdl", self.health);
+		ThrowGib ("progs/gib2.mdl", self.health);
+		for(float i = 0; i < 4; i++)
+			ThrowGib ("progs/gib3.mdl", self.health);
 		remove(self);
 		return;
 	}

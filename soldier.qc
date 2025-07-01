@@ -234,7 +234,7 @@ void() army_fire =
 	dir = en.origin - en.velocity*0.2;
 	dir = normalize (dir - self.origin);
 	
-	FireBullets (9, dir, '0.1 0.1 0', 2, 1);
+	FirePallets (9, dir, '0.1 0.1 0', 2, 1, TE_SHOTGUN_SHOT);
 };
 
 void() army_CheckForCharge =
@@ -323,14 +323,6 @@ void() army_die =
 	
 	self.movetype = MOVETYPE_TOSS;
 	self.takedamage = DAMAGE_YES;
-	
-	if(self.spawnflags & DROP_AMMO)
-	{
-		if(self.ammo_shells <= 0)
-			self.ammo_shells = 3; 
-
-		DropBackpack();
-	}
 
 	self.skin = 1;
 	self.deadflag = DEAD_DEAD;

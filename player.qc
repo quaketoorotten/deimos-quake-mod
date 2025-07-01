@@ -138,26 +138,26 @@ void()	player_run =[	$rockrun1,	player_run	]
 	self.walkframe = self.walkframe + 1;
 };
 
-void()	player_shot1 =	[$shotatt1, player_shot2	] {self.weaponframe=1; 
+void()	player_shot1 =	[94, player_shot2	] {self.weaponframe=1; 
 self.effects = self.effects | EF_MUZZLEFLASH;};
-void()	player_shot2 =	[$shotatt2, player_shot3	] {self.weaponframe=2; };
-void()	player_shot3 =	[$shotatt3, player_shot4	] {self.weaponframe=3; self.nextthink = time + 0.12;};
-void()	player_shot4 =	[$shotatt4, player_shot5	] {self.weaponframe=4; self.nextthink = time + 0.12;};
-void()	player_shot5 =	[$shotatt5, player_shot6	] {self.weaponframe=5; self.nextthink = time + 0.12;};
-void()	player_shot6 =	[$shotatt6,  player_run	      ] {self.weaponframe=6; self.nextthink = time + 0.12;};
+void()	player_shot2 =	[95, player_shot3	] {self.weaponframe=2; };
+void()	player_shot3 =	[96, player_shot4	] {self.weaponframe=3; self.nextthink = time + 0.12;};
+void()	player_shot4 =	[97, player_shot5	] {self.weaponframe=4; self.nextthink = time + 0.12;};
+void()	player_shot5 =	[98, player_shot6	] {self.weaponframe=5; self.nextthink = time + 0.12;};
+void()	player_shot6 =	[99,  player_run	      ] {self.weaponframe=6; self.nextthink = time + 0.12;};
 
-void()	player_sshot1 =	[$shotatt1, player_sshot2	] {self.weaponframe=1; self.nextthink = time + 0.105;
+void()	player_sshot1 =	[100, player_sshot2	] {self.weaponframe=1; self.nextthink = time + 0.105;
 self.effects = self.effects | EF_MUZZLEFLASH;};
-void()	player_sshot2 =	[$shotatt2, player_sshot3	] {self.weaponframe=2; self.nextthink = time + 0.105;};
-void()	player_sshot3 =	[$shotatt3, player_sshot4	] {self.weaponframe=3; self.nextthink = time + 0.105;};
-void()	player_sshot4 =	[$shotatt4, player_sshot5	] {self.weaponframe=4; self.nextthink = time + 0.105;};
-void()	player_sshot5 =	[$shotatt5, player_sshot6	] {self.weaponframe=5; self.nextthink = time + 0.105;};
-void()	player_sshot6 =	[$shotatt6, player_sshot7	] {self.weaponframe=6; self.nextthink = time + 0.105;};
-void()	player_sshot7 =	[$shotatt6, player_sshot8	] {self.weaponframe=7; self.nextthink = time + 0.105;};
-void()	player_sshot8 =	[$shotatt6, player_sshot9	] {self.weaponframe=8; self.nextthink = time + 0.105;};
-void()	player_sshot9 =	[$shotatt6, player_sshot10	] {self.weaponframe=9; self.nextthink = time + 0.105;};
-void()	player_sshot10 =	[$shotatt6, player_sshot11	] {self.weaponframe=10; self.nextthink = time + 0.105;};
-void()	player_sshot11 =	[$shotatt6, player_run	] {self.weaponframe=11; self.nextthink = time + 0.105;};
+void()	player_sshot2 =	[101, player_sshot3	] {self.weaponframe=2; self.nextthink = time + 0.105;};
+void()	player_sshot3 =	[102, player_sshot4	] {self.weaponframe=3; self.nextthink = time + 0.105;};
+void()	player_sshot4 =	[103, player_sshot5	] {self.weaponframe=4; self.nextthink = time + 0.105;};
+void()	player_sshot5 =	[104, player_sshot6	] {self.weaponframe=5; self.nextthink = time + 0.105;};
+void()	player_sshot6 =	[105, player_sshot7	] {self.weaponframe=6; self.nextthink = time + 0.105;};
+void()	player_sshot7 =	[106, player_sshot8	] {self.weaponframe=7; self.nextthink = time + 0.105;};
+void()	player_sshot8 =	[107, player_sshot9	] {self.weaponframe=8; self.nextthink = time + 0.105;};
+void()	player_sshot9 =	[108, player_sshot10	] {self.weaponframe=9; self.nextthink = time + 0.105;};
+void()	player_sshot10 =	[109, player_sshot11	] {self.weaponframe=10; self.nextthink = time + 0.105;};
+void()	player_sshot11 =	[110, player_run	] {self.weaponframe=11; self.nextthink = time + 0.105;};
 
 void()	player_axe1 =	[87, player_axe2	] {self.weaponframe=1;};
 void()	player_axe2 =	[88, player_axe3	] {self.weaponframe=2;};
@@ -168,20 +168,20 @@ void()	player_axe6 =	[92, player_run	] {self.weaponframe=6;};
 
 //============================================================================
 
-void() plas_cooldown1 = [$light1 , plas_cooldown2]{self.weaponframe=5; 
-sound (self, CHAN_BODY, "weapons/hyperdn.wav", 1, ATTN_NORM);};
-void() plas_cooldown2 = [$light1 , plas_cooldown3] { self.weaponframe=6;};
-void() plas_cooldown3 = [$light2 , plas_cooldown4] { self.weaponframe=7;};
-void() plas_cooldown4 = [$light2 , plas_cooldown5] { self.weaponframe=7;};
-void() plas_cooldown5 = [$light2 , plas_cooldown6] { self.weaponframe=7; 
-sound (self, CHAN_BODY, "weapons/hyperup.wav", 1, ATTN_NORM);};
-void() plas_cooldown6 = [$light2 , player_run    ] { self.weaponframe=8;};
+void() plas_cooldown1 = [112 , plas_cooldown2]{self.weaponframe=5; 
+sound (self, 5, "weapons/hyperdn.wav", 1, ATTN_NORM);};
+void() plas_cooldown2 = [112 , plas_cooldown3] { self.weaponframe=6;};
+void() plas_cooldown3 = [113 , plas_cooldown4] { self.weaponframe=7;};
+void() plas_cooldown4 = [113 , plas_cooldown5] { self.weaponframe=7;};
+void() plas_cooldown5 = [113 , plas_cooldown6] { self.weaponframe=7; 
+sound (self, 5, "weapons/hyperup.wav", 1, ATTN_NORM);};
+void() plas_cooldown6 = [113 , player_run    ] { self.weaponframe=8;};
 
 void() player_zero_FX = { self.effects = 0; };
 
-void() player_plas1   =[$nailatt1 , player_plas1   ]
+void() player_plas1   =[110 , player_plas1   ]
 {
-	if (!self.button0 && !self.cnt) 
+	if (!self.button0) 
 	{
 		player_run(); 
 		return;
@@ -194,31 +194,17 @@ void() player_plas1   =[$nailatt1 , player_plas1   ]
 	if (mod(self.weaponframe, 2) != 0)
 	{
 		self.effects = self.effects | EF_MUZZLEFLASH;
-		self.frame = $nailatt1;
+		self.frame = 110;
 	}
 	else 
-		self.frame = $nailatt2;
+		self.frame = 111;
 
 	SuperDamageSound();
 	W_FirePlasma ();
 	self.nextthink = time + 0.2;
 };
 
-void() player_chngstop1   =[$light1 , player_chngstop2   ] {self.weaponframe=15; sound (self, CHAN_BODY, "weapons/chngnd1a.wav", 1, ATTN_NORM);};
-void() player_chngstop2   =[$light1 , player_chngstop3   ] {self.weaponframe=14; };
-void() player_chngstop3   =[$light1 , player_chngstop4   ] {self.weaponframe=13; };
-void() player_chngstop4   =[$light2 , player_chngstop5   ] {self.weaponframe=12; };
-void() player_chngstop5   =[$light2 , player_chngstop6   ] {self.weaponframe=11; };
-void() player_chngstop6   =[$light2 , player_run         ] {self.weaponframe=10; 
-	if (self.ammo_nails < 1)
-	{
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
-		return;
-	}
-};
-
-void() player_nail1   =[$nailatt1 , player_nail1   ]
+void() player_nail1   =[110 , player_nail1   ]
 {
 	if (!self.button0)
 	{
@@ -235,78 +221,110 @@ void() player_nail1   =[$nailatt1 , player_nail1   ]
 	if (mod(self.weaponframe, 2) != 0)
 	{
 		self.effects = self.effects | EF_MUZZLEFLASH;
-		self.frame = $nailatt1;
+		self.frame = 110;
 	}
 	else 
-		self.frame = $nailatt2;
+		self.frame = 111;
 
 	SuperDamageSound();
 	W_FireMachinegun ();
 	self.nextthink = time + 0.09;
 };
 
-void() player_chngstart1   =[$nailatt1 , player_chngstart1  ]
+void() player_chngstop1   =[112 , player_chngstop2   ] {self.weaponframe=26; sound (self, 5, "weapons/chngnd1a.wav", 1, ATTN_NORM);};
+void() player_chngstop2   =[112 , player_chngstop3   ] {self.weaponframe=27; };
+void() player_chngstop3   =[112 , player_chngstop4   ] {self.weaponframe=28; };
+void() player_chngstop4   =[113 , player_chngstop5   ] {self.weaponframe=29; };
+void() player_chngstop5   =[113 , player_chngstop6   ] {self.weaponframe=30; };
+void() player_chngstop6   =[113 , player_run         ] {self.weaponframe=31; 
+	if (self.ammo_nails < 1)
+	{
+		self.weapon = W_BestWeapon ();
+		W_SetCurrentAmmo ();
+		return;
+	}
+};
+
+// i've gone insane i guess///
+
+float player_chaingunfireframes[] =
+{
+	0, 1, 0, 0, 0, 5, 0, 0, 8, 0, 0, 11, 0, 13, 0, 15, 0, 17, 18, 19, 20, 21, 22, 23, 24, 25, 0
+};
+
+void() player_chngstart1   = [110 , player_chngstart1  ]
 {	
-	if (!self.button0 && !self.cnt) 
+	if (!self.button0) 
 	{
 		player_run(); 
 		return;
 	}
-
-	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
-		self.weaponframe = 1;
 	
-	if (mod(self.weaponframe, 2) != 0)
+	self.weaponframe = self.weaponframe + 1;
+	self.shotcount = self.shotcount + 1;
+
+	if (self.weaponframe > 25)
 	{
-		self.effects = self.effects | EF_MUZZLEFLASH;
-		self.frame = $nailatt1;
+		self.shotcount = 20;
+		self.weaponframe = 20;
 	}
+
+	if (mod(self.weaponframe, 2) != 0)
+		self.frame = 110;
 	else 
-		self.frame = $nailatt2;
+		self.frame = 111;
 
-	if (self.shotcount == 3)
-		sound (self, CHAN_BODY, "weapons/chngnu1a.wav", 1, ATTN_NORM);
+	if(self.weaponframe == player_chaingunfireframes[self.shotcount])
+	{	
+		W_FireChaingun ();
+		SuperDamageSound();
+	
+		self.effects = self.effects | EF_MUZZLEFLASH;
+	}
 
-	if (self.shotcount >= 12)
-		sound (self, CHAN_BODY, "weapons/chngnl1a.wav", 1, ATTN_NORM);
+	if (self.weaponframe == 5)
+		sound (self, 5, "weapons/chngnu1a.wav", 1, ATTN_NORM);
 
-	SuperDamageSound();
-	W_FireChaingun ();
+	if (self.weaponframe > 14)
+		sound (self, 5, "weapons/chngnl1a.wav", 1, ATTN_NORM);
+	
+	if (self.spinspeed <= 2 && self.weaponframe > 23)
+		self.spinspeed += 0.25;
+
 	self.nextthink = time + 0.1;
 };
 
 //============================================================================
 
 
-void() player_rocket1   =[$rockatt1, player_rocket2  ] {self.weaponframe=1;
+void() player_rocket1   =[133, player_rocket2  ] {self.weaponframe=1;
 self.effects = self.effects | EF_MUZZLEFLASH;};
-void() player_rocket2   =[$rockatt2, player_rocket3  ] {self.weaponframe=2; self.nextthink = time + 0.02;};
-void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.weaponframe=3; self.nextthink = time + 0.102;};
-void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.weaponframe=4; self.nextthink = time + 0.102;};
-void() player_rocket5   =[$rockatt5, player_rocket6  ] {self.weaponframe=5; self.nextthink = time + 0.1;};
-void() player_rocket6   =[$rockatt6, player_run  ] {self.weaponframe=6; self.nextthink = time + 0.1;};
+void() player_rocket2   =[134, player_rocket3  ] {self.weaponframe=2; self.nextthink = time + 0.02;};
+void() player_rocket3   =[135, player_rocket4  ] {self.weaponframe=3; self.nextthink = time + 0.102;};
+void() player_rocket4   =[136, player_rocket5  ] {self.weaponframe=4; self.nextthink = time + 0.102;};
+void() player_rocket5   =[137, player_rocket6  ] {self.weaponframe=5; self.nextthink = time + 0.1;};
+void() player_rocket6   =[138, player_run  ] {self.weaponframe=6; self.nextthink = time + 0.1;};
 void(float num_bubbles) DeathBubbles;
 
-void() player_bfg1   =[$light1 , player_bfg2   ] {self.weaponframe=1;self.nextthink = time + 0.105;}
-void() player_bfg2   =[$light2 , player_bfg3   ] {self.weaponframe=2;self.nextthink = time + 0.105;}
-void() player_bfg3   =[$light1 , player_bfg4   ] {self.weaponframe=3;self.nextthink = time + 0.105;}
-void() player_bfg4   =[$light2 , player_bfg5   ] {self.weaponframe=4;self.nextthink = time + 0.105;}
-void() player_bfg5   =[$light1 , player_bfg6   ] {self.weaponframe=5;self.nextthink = time + 0.105;}
-void() player_bfg6   =[$light2 , player_bfg7   ] {self.weaponframe=6;self.nextthink = time + 0.105;}
-void() player_bfg7   =[$light1 , player_bfg8   ] {self.weaponframe=7;self.nextthink = time + 0.105;}
-void() player_bfg8   =[$light2 , player_bfg9   ] {self.weaponframe=8;self.nextthink = time + 0.105;  W_FireBFG();};
-void() player_bfg9    =[$rockatt1 , player_bfg10   ] {self.weaponframe=9;self.nextthink = time + 0.105; self.punchangle_x = -12; };
-void() player_bfg10   =[$rockatt2, player_bfg11   ] {self.weaponframe=10; self.effects = 0; self.nextthink = time + 0.105;};
-void() player_bfg11   =[$rockatt3, player_bfg12   ] {self.weaponframe=11;self.nextthink = time + 0.105; };
-void() player_bfg12   =[$rockatt4, player_bfg13   ] {self.weaponframe=12;self.nextthink = time + 0.105;};
-void() player_bfg13   =[$rockatt5, player_bfg14   ] {self.weaponframe=13;self.nextthink = time + 0.105;};
-void() player_bfg14   =[$rockatt6, player_bfg15   ] {self.weaponframe=14;self.nextthink = time + 0.105;};
-void() player_bfg15   =[$rockatt6, player_bfg16  ] {self.weaponframe=15;self.nextthink = time + 0.05;};
-void() player_bfg16   =[$rockatt6, player_bfg17  ] {self.weaponframe=16;self.nextthink = time + 0.105;};
-void() player_bfg17   =[$rockatt6, player_bfg18  ] {self.weaponframe=17;self.nextthink = time + 0.105;};
-void() player_bfg18   =[$rockatt6, player_bfg19  ] {self.weaponframe=18;self.nextthink = time + 0.105;};
-void() player_bfg19   =[$rockatt6, player_run ] {self.weaponframe=19;self.nextthink = time + 0.105;};
+void() player_bfg1   =[114 , player_bfg2   ] {self.weaponframe=1;self.nextthink = time + 0.105;}
+void() player_bfg2   =[115 , player_bfg3   ] {self.weaponframe=2;self.nextthink = time + 0.105;}
+void() player_bfg3   =[116 , player_bfg4   ] {self.weaponframe=3;self.nextthink = time + 0.105;}
+void() player_bfg4   =[117 , player_bfg5   ] {self.weaponframe=4;self.nextthink = time + 0.105;}
+void() player_bfg5   =[118 , player_bfg6   ] {self.weaponframe=5;self.nextthink = time + 0.105;}
+void() player_bfg6   =[119 , player_bfg7   ] {self.weaponframe=6;self.nextthink = time + 0.105;}
+void() player_bfg7   =[120 , player_bfg8   ] {self.weaponframe=7;self.nextthink = time + 0.105;}
+void() player_bfg8   =[121 , player_bfg9   ] {self.weaponframe=8;self.nextthink = time + 0.105;  W_FireBFG();};
+void() player_bfg9    =[122 , player_bfg10   ] {self.weaponframe=9;self.nextthink = time + 0.105; self.punchangle_x = -12; };
+void() player_bfg10   =[123, player_bfg11   ] {self.weaponframe=10; self.effects = 0; self.nextthink = time + 0.105;};
+void() player_bfg11   =[124, player_bfg12   ] {self.weaponframe=11;self.nextthink = time + 0.105; };
+void() player_bfg12   =[125, player_bfg13   ] {self.weaponframe=12;self.nextthink = time + 0.105;};
+void() player_bfg13   =[126, player_bfg14   ] {self.weaponframe=13;self.nextthink = time + 0.105;};
+void() player_bfg14   =[127, player_bfg15   ] {self.weaponframe=14;self.nextthink = time + 0.105;};
+void() player_bfg15   =[128, player_bfg16  ] {self.weaponframe=15;self.nextthink = time + 0.05;};
+void() player_bfg16   =[129, player_bfg17  ] {self.weaponframe=16;self.nextthink = time + 0.105;};
+void() player_bfg17   =[130, player_bfg18  ] {self.weaponframe=17;self.nextthink = time + 0.105;};
+void() player_bfg18   =[131, player_bfg19  ] {self.weaponframe=18;self.nextthink = time + 0.105;};
+void() player_bfg19   =[132, player_run ] {self.weaponframe=19;self.nextthink = time + 0.105;};
 
 void() PainSound =
 {

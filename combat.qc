@@ -55,20 +55,26 @@ Killed
 */
 void(entity targ, entity attacker) Killed =
 {
-// why the fuck wasn't this only for the player before
-	if (targ.health < -99 && (targ.flags & FL_CLIENT))
-		targ.health = -99;		// don't let sbar look bad if a player
+	local entity oself;
 
-	if (targ.movetype == MOVETYPE_PUSH || targ.movetype == MOVETYPE_NONE)
+	oself = self;
+	self = targ;
+	
+// why the fuck wasn't this only for the player before
+	if (self.health < -99 && (self.flags & FL_CLIENT))
+		self.health = -99;		// don't let sbar look bad if a player
+
+	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE)
 	{	// doors, triggers, etc
-		targ.th_die ();
+		self.th_die ();
+		self = oself;
 		return;
 	}
 
-	targ.enemy = attacker;
+	self.enemy = attacker;
 	
 // bump the monster counter
-	if ((targ.flags & FL_MONSTER) && !(targ.deadflag & DEAD_DEAD) )
+	if ((self.flags & FL_MONSTER) && !(self.deadflag & DEAD_DEAD) )
 	{
 		killed_monsters = killed_monsters + 1;
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
@@ -76,70 +82,22 @@ void(entity targ, entity attacker) Killed =
 
 	ClientObituary(self, attacker);
 	
-	if(!(targ.flags & FL_MONSTER) )
-		targ.takedamage = DAMAGE_NO;
+	if(!(self.flags & FL_MONSTER) )
+		self.takedamage = DAMAGE_NO;
 
-	targ.touch = SUB_Null;
+	self.touch = SUB_Null;
 
 	monster_death_use();
-	targ.th_die ();
-	if (targ.mass > 0)
-		targ.mass = 0;
+	self.th_die ();
+
+	if (self.mass > 0 && (self.flags & FL_MONSTER))
+	{
+		self.velocity = '0 0 0';
+		self.mass = 0;
+	}
+	
+	self = oself;
 };
-
-void M_React (entity attacker, entity targ) // q2 port
-{	
-	if (!(attacker.flags & FL_MONSTER) && !(attacker.flags & FL_CLIENT))
-		return;
-	
-	if (attacker == targ || attacker == targ.enemy)
-		return;
-	
-	if (targ.flags & FL_TORTURED)
-		return;
-		
-	if (attacker.flags & FL_CLIENT)
-	{
-		if (targ.enemy.flags & FL_CLIENT && targ.enemy)
-		{
-			if(visible(targ, targ.enemy))
-			{
-				targ.oldenemy = attacker;
-				return;
-			}
-			targ.oldenemy = targ.enemy;
-		}
-		targ.enemy = attacker;
-		FoundTarget(targ);
-		return;
-	}
-	
-	if ( (targ.classname != attacker.classname) 
-		|| (targ.classname == "monster_army" )
-		|| (targ.classname == "monster_enforcer" ) )
-	{
-		if (targ.enemy.classname == "player")
-			targ.oldenemy = targ.enemy;
-
-		targ.enemy = attacker;
-		FoundTarget (targ);
-	}
-	else if (attacker.enemy == targ)
-	{
-		if (targ.enemy.classname == "player")
-			targ.oldenemy = targ.enemy;
-
-		targ.enemy = attacker;
-		FoundTarget (targ);
-	}
-	else if (attacker.enemy && attacker.enemy != targ) // otherwise get mad at whoever they are mad at (help our buddy) unless it is us!
-	{
-		if ((targ.enemy.flags & FL_CLIENT) && targ.enemy)
-			targ.oldenemy = targ.enemy;
-		targ.enemy = attacker.enemy;
-		FoundTarget (targ);
-	}
-}
 
 
 /*
@@ -194,21 +152,24 @@ void(entity targ, entity inflictor, entity attacker, float damage, float kick) T
 
 	// figure momentum add
 	
-	if ((targ.mass > 0) && (targ.movetype != MOVETYPE_PUSH))
+	if (targ.mass == 0)
+		kick = 0;
+
+	else if ((targ.movetype != MOVETYPE_PUSH) && (targ.movetype != MOVETYPE_NONE) && (targ.movetype != MOVETYPE_BOUNCE))
 	{
-		if(kick && !(targ.flags & FL_DODGED))
+		if(kick && (checkbottom(targ)) )
 		{
 			local vector dir = ((targ.maxs - targ.mins) * 0.5 + targ.absmin) - ((inflictor.maxs - inflictor.mins) * 0.5 + inflictor.absmin);
 			dir = normalize(dir);
-	
-			if((checkbottom(targ)) && (targ.flags & FL_MONSTER) && !(targ.flags & FL_FLY))
+
+			if((targ.flags & FL_MONSTER))
 			{
 				targ.flags = targ.flags - (targ.flags & FL_ONGROUND);
-				targ.velocity_z = targ.velocity_z + vlen(dir) * (500.0 * kick / targ.mass );
+				//targ.velocity_z = targ.velocity_z + vlen(dir* (500.0 * kick / targ.mass ) );
 			}
 
 			if ((targ.flags & FL_CLIENT) && attacker == targ)
-				targ.velocity = targ.velocity + dir* (1600.0 * kick / targ.mass );	
+				targ.velocity = targ.velocity + dir* (700.0 * kick / targ.mass );	
 			else
 				targ.velocity = targ.velocity + dir* (500.0 * kick / targ.mass );
 		}
@@ -231,7 +192,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float kick) T
 	if ( (teamplay == 1) && (targ.team > 0)&&(targ.team == attacker.team) )
 		return;
 		
-// do the damage
+// do damage
 	if(take > 0)
 	{	
 		if (attacker.classname == "bfg" && targ.classname == "boss2")
@@ -241,40 +202,49 @@ void(entity targ, entity inflictor, entity attacker, float damage, float kick) T
 			
 		if (targ.health <= 0)
 		{		
-			oldself = self;
-			self = targ;
-	
 			if(self.classname == "func_breakable")
 				self.enemy = inflictor;
 
-			Killed (self, attacker);
-			self = oldself;
+			Killed (targ, attacker);
 			return;
 		}
 	}
+			
 
 // react to the damage
 	oldself = self;
 	self = targ;
 
-	if (self.flags & FL_MONSTER)
+	if ( (self.flags & FL_MONSTER) && !(self.flags & FL_TORTURED)
+		&& ( (attacker.flags & FL_MONSTER) || attacker.classname == "player") )
 	{
-		M_React (attacker, self);
-		
-		if(take > 0)
+		// get mad unless of the same class (except for soldiers)
+		if (self != attacker && attacker != self.enemy && !(self.enemy.flags & FL_MONSTER)) // dont infight while already INFIGHTINg
 		{
-			self.th_pain (attacker, take);
-				// nightmare mode monsters don't make pain noises often	
-			if (skill == 3)
-				self.pain_finished = time + 4 + random()*2;
-			else if (skill == 2)
-				self.pain_finished = time + 4;
+			if ( (self.classname != attacker.classname) 
+				|| (self.classname == "monster_army" ) 
+				|| (self.classname == "monster_enforcer" ))
+			{
+				if (self.enemy.classname == "player")
+					self.oldenemy = self.enemy;
+
+				self.enemy = attacker;
+				FoundTarget (self);
+			}
+				
 		}
+
 	}
 
-	else if (take > 0 && self.th_pain)
+	if (self.th_pain && take > 0)
+	{
 		self.th_pain (attacker, take);
-	
+		// nightmare mode monsters don't make pain noises often	
+		if (skill == 3)
+			self.pain_finished = time + 4 + random()*2;
+		else if (skill == 2)
+			self.pain_finished = time + 4;
+	}
 	self = oldself;
 };
 
@@ -313,12 +283,10 @@ void(entity inflictor, entity attacker, float radius, entity ignore) T_RadiusDam
 					if (CanDamage (head, inflictor))
 					{	// baron takes no damage from all explosions
 
-						if ( (head.classname == "monster_shambler" || 
-							head.classname == "monster_boss2") && attacker.classname != "bfg")
-					
+						if (head.classname == "monster_shambler" || head.classname == "monster_boss2")						
 							T_Damage (head, inflictor, attacker, points*0, 0);
 						else 
-							T_Damage (head, inflictor, attacker, points, points*0.4);
+							T_Damage (head, inflictor, attacker, points, points);
 					}
 				}
 			}

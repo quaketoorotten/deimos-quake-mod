@@ -456,7 +456,7 @@ void() spawn_ogre =
 	self.th_pain = ogre_pain;
 	self.th_dodge = ogre_duckdown1;
 	self.th_checkattack = OgreCheckAttack;
-	self.mass = 200;
+	self.mass = 300;
 	self.dspeed = 0;
 	self.th_spawn = spawn_ogre;
 		

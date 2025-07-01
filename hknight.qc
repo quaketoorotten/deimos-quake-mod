@@ -51,6 +51,7 @@ void(vector org, vector dir) launch_hknightMissile=
 	
 	newmis = spawn ();
 	newmis.owner = self;
+	newmis.classname = "knightspike";
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 
@@ -99,7 +100,6 @@ void(float offset) hknight_shot =
 	dir = normalize (targorg - org);
 	
 	launch_hknightMissile (org, dir);
-	newmis.classname = "knightspike";
 
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
 };
@@ -112,14 +112,18 @@ if (!enemy_vis)
 if (time < self.attack_finished)
 	return;	
 if ( fabs(self.origin_z - self.enemy.origin_z) > 20)
+{
+	if(random() <= 0.6)
+		self.th_missile();
 	return;		// too much height change
-
+}
 if ( vlen (self.origin - self.enemy.origin) < 80)
 		return;		// use regular attack
 
 // charge		
 	SUB_AttackFinished (self, 1);
 	hknight_char1 ();
+	self.cnt = 0;
 
 };
 
@@ -169,7 +173,10 @@ local float 	ldmg, kick;
 	delta = self.enemy.origin - self.origin;
 
 	if (vlen(delta) > 100)	
+	{
+		sound (self, CHAN_VOICE, "enforcer/woosh.wav", 1, ATTN_NORM);
 		return;
+	}
 
 	if (!CanDamage (self.enemy, self))
 		return;
@@ -186,7 +193,7 @@ local float 	ldmg, kick;
 			self.enemy.flags = self.enemy.flags - (self.enemy.flags & FL_ONGROUND);
 	}
 	T_Damage (self.enemy, self, self, ldmg, kick);
-	sound (self, CHAN_VOICE, "demon/dhit2.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "player/punch2.wav", 1, ATTN_NORM);
 
 };
 
@@ -302,30 +309,29 @@ void()	hknight_magica5 =[	95,	hknight_magica6	] {ai_face();hknight_shot(20);};
 void()	hknight_magica6 =[	96,	hknight_magica7	] {ai_face();};
 void()	hknight_magica7 =[	97,	hknight_run1	] 
 {
-	if (random() < 0.6 && self.cnt <= 3)
-		SUB_CheckRefireSpecial (hknight_magica1);
-	else
-		SUB_AttackFinished (self, 3);
+	if (random() <= 0.5 && self.cnt <= 3)
+		hknight_magica1();
 };
 
 //===========================================================================
 
-void()	hknight_char1	=[	43,	hknight_char2	] { ai_charge(30); sound (self, CHAN_VOICE, "knight/sword2.wav", 1, ATTN_NORM);};
-void()	hknight_char2	=[	44,	hknight_char3	] {ai_charge(35); hknight_slice();};
-void()	hknight_char3	=[	45,	hknight_char4	] {ai_charge(28); hknight_slice();};
-void()	hknight_char4	=[	46,	hknight_char5	] {ai_charge(26); hknight_slice();};
-void()	hknight_char5	=[	47,	hknight_char6	] {ai_charge(24); hknight_slice();};
-void()	hknight_char6	=[	48,	hknight_char7	] {ai_charge(30);};
-void()	hknight_char7	=[	49,	hknight_char8	] {ai_charge(31);}
-void()	hknight_char8	=[	50,	hknight_char9	] { ai_charge(33); hknight_CheckContinueCharge (); };
-void()	hknight_char9	=[	51,	hknight_char10	] {ai_charge(27);  hknight_slice();};
-void()	hknight_char10	=[	52,	hknight_char11	] {ai_charge(22);  hknight_slice();};
-void()	hknight_char11	=[	53,	hknight_char12	] {ai_charge(22);  hknight_slice();};
-void()	hknight_char12	=[	54,	hknight_char13	] {ai_charge(28);  hknight_slice();};
-void()	hknight_char13	=[	55,	hknight_char14	] {ai_charge(18);  hknight_slice();};
-void()	hknight_char14	=[	56,	hknight_char15	] {ai_charge(18); };
-void()	hknight_char15	=[	57,	hknight_char16	] {ai_charge(18); };
-void()	hknight_char16	=[	58,	hknight_char1	] {ai_charge(18); hknight_CheckContinueCharge (); };
+
+void()	hknight_char1	=[	43,	hknight_char2	] { ai_charge(20); sound (self, CHAN_VOICE, "knight/sword2.wav", 1, ATTN_NORM);};
+void()	hknight_char2	=[	44,	hknight_char3	] {ai_charge(25); hknight_slice();};
+void()	hknight_char3	=[	45,	hknight_char4	] {ai_charge(18); hknight_slice();};
+void()	hknight_char4	=[	46,	hknight_char5	] {ai_charge(16); hknight_slice();};
+void()	hknight_char5	=[	47,	hknight_char6	] {ai_charge(14); hknight_slice();};
+void()	hknight_char6	=[	48,	hknight_char7	] {ai_charge(25);};
+void()	hknight_char7	=[	49,	hknight_char8	] {ai_charge(21);}
+void()	hknight_char8	=[	50,	hknight_char9	] {ai_charge(13); hknight_CheckContinueCharge (); };
+void()	hknight_char9	=[	51,	hknight_char10	] {ai_charge(20);  hknight_slice();};
+void()	hknight_char10	=[	52,	hknight_char11	] {ai_charge(25);  hknight_slice();};
+void()	hknight_char11	=[	53,	hknight_char12	] {ai_charge(18);  hknight_slice();};
+void()	hknight_char12	=[	54,	hknight_char13	] {ai_charge(16);  hknight_slice();};
+void()	hknight_char13	=[	55,	hknight_char14	] {ai_charge(14);  hknight_slice();};
+void()	hknight_char14	=[	56,	hknight_char15	] {ai_charge(25); };
+void()	hknight_char15	=[	57,	hknight_char16	] {ai_charge(21); };
+void()	hknight_char16	=[	58,	hknight_char1	] {ai_charge(13); hknight_CheckContinueCharge (); };
 
 //===========================================================================
 
@@ -402,7 +408,8 @@ float	hknight_type;
 void() hknight_melee =
 {
 	hknight_type = hknight_type + 1;
-
+	self.cnt = 0;
+	
 	if (hknight_type == 1)
 		hknight_slice1 ();
 	else if (hknight_type == 2)
@@ -427,8 +434,9 @@ void() monster_hell_knight =
 	precache_model2 ("progs/k_spike.mdl");
 	precache_model2 ("progs/k_homspike.mdl");
 	precache_model2 ("progs/h_hellkn.mdl");
-
 	
+	
+	precache_sound2 ("enforcer/woosh.wav");
 	precache_sound2 ("hknight/attack1.wav");
 	precache_sound2 ("hknight/death1.wav");
 	precache_sound2 ("hknight/pain1.wav");
@@ -455,7 +463,7 @@ void() spawn_hknight =
 	setsize (self, VEC_HULL3_MIN, VEC_HULL3_MAX);
 	self.health = 425;
 	self.max_health = 425;
-	self.mass = 300;
+	self.mass = 400;
 	self.skin = 0;
 
 	self.th_stand = hknight_stand1;

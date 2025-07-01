@@ -160,7 +160,7 @@ void() tort_die =
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 
-		ThrowGib ("progs/gib2.mdl", -20);
+		ThrowGib ("progs/gib1.mdl", -20);
 		ThrowGib ("progs/gib2.mdl", -20);
 		ThrowGib ("progs/gib3.mdl", -20);
 		ThrowHead ("progs/h_tort.mdl", -20);

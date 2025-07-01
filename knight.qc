@@ -236,7 +236,7 @@ void() spawn_knight =
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 125;
 	self.max_health = 125;
-	self.mass = 150;
+	self.mass = 200;
 	self.skin = 0;
 
 	self.th_stand = knight_stand1;

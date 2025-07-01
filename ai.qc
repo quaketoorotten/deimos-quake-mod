@@ -287,48 +287,46 @@ void(entity e) HuntTarget =
 	SUB_AttackFinished (e, 1);	// wait a while before first attack
 };
 
-void(entity e) SightSound =
+void() SightSound =
 {
 local float	rsnd;
 
-	if (e.classname == "monster_ogre")	
-		sound (e, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_knight")
-		sound (e, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_shambler")
-		sound (e, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_demon1")
-		sound (e, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_wizard")
-		sound (e, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_zombie")
-		sound (e, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_dog")
-		sound (e, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_hell_knight")
-		sound (e, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_tarbaby")
-		sound (e, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_vomit")
-		sound (e, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_enforcer")
+	if (self.classname == "monster_ogre")	
+		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_knight")
+		sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_shambler")
+		sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_demon1")
+		sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_wizard")
+		sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_zombie")
+		sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_dog")
+		sound (self, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_hell_knight")
+		sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_tarbaby")
+		sound (self, CHAN_VOICE, "blob/sight1.wav", 0.85, ATTN_NORM);
+	else if (self.classname == "monster_enforcer")
 	{
 		rsnd = rint(random() * 3);			
 		if (rsnd == 1)
-			sound (e, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
 		else if (rsnd == 2)
-			sound (e, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
 		else if (rsnd == 0)
-			sound (e, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
 		else
-			sound (e, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
 	}
-	else if (e.classname == "monster_army")
-		sound (e, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_shalrath")
-		sound (e, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
-	else if (e.classname == "monster_boss2")
-		sound (e, CHAN_VOICE, "boss2/ssight.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_army")
+		sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_shalrath")
+		sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_boss2")
+		sound (self, CHAN_VOICE, "boss2/ssight.wav", 1, ATTN_NORM);
 };
 
 void(entity e) FoundTarget =
@@ -342,7 +340,6 @@ void(entity e) FoundTarget =
 	e.show_hostile = time + 1;		// wake up other monsters
 	
 	e.last_sighting = e.enemy.origin;
-	SightSound (e);
 	HuntTarget (e);
 };
 /*
@@ -432,6 +429,7 @@ float() FindTarget =
 	}
 	
 	FoundTarget (self);
+	SightSound ();
 	return TRUE;
 };
 
@@ -996,7 +994,7 @@ void(float dist) ai_run =
 	
 	if((self.aiflags & AI_LOST_SIGHT))
 	{		
-		traceline(self.origin, self.last_sighting, 0, self); // pray for quakec tracebox
+		traceline(self.origin, self.last_sighting, 2, self); // pray for quakec tracebox
 	
 		if(trace_fraction < 1)
 		{	

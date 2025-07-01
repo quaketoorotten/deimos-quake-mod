@@ -220,7 +220,7 @@ void() door_touch =
 
 	self.owner.attack_finished = time + 2;
 
-	if (self.owner.message != "")
+	if (self.message != "")
 	{
 		centerprint(other, self.owner.message);
 		sound(other, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
@@ -435,8 +435,10 @@ Key doors are allways wait -1.
 */
 
 void() func_door =
-
-{
+	
+{	
+	precache_sound ("misc/talk.wav");
+	
 	if (world.worldtype == 0)
 	{
 		precache_sound ("doors/medtry.wav");

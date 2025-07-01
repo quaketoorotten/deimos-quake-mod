@@ -197,19 +197,12 @@ TE_BFGEXPLOD
 ================
 */
 
-void() TE_BFGEXPLOD_THINK =	
-{
-	if (self.frame < 4)
-		self.frame += 1;
-	if (self.frame == 4)
-	{
-		TE_BFGEXPLOD_CNT = TE_BFGEXPLOD_CNT - 1;
-		remove(self);
-		return;
-	}
-	self.think = TE_BFGEXPLOD_THINK;
-	self.nextthink = time + 0.13;
-};
+void()	TE_BFGEXPLOD1	=	[0,		TE_BFGEXPLOD2] {self.nextthink = time + 0.13;}
+void()	TE_BFGEXPLOD2	=	[1,		TE_BFGEXPLOD3] {self.nextthink = time + 0.13;}
+void()	TE_BFGEXPLOD3	=	[2,		TE_BFGEXPLOD4] {self.nextthink = time + 0.13;}
+void()	TE_BFGEXPLOD4	=	[3,		TE_BFGEXPLOD5] {}
+void()	TE_BFGEXPLOD5	=	[3,		SUB_Remove]  {TE_BFGEXPLOD_CNT = TE_BFGEXPLOD_CNT - 1; }
+
 
 void(vector to) TE_BFGEXPLOD =
 {
@@ -224,60 +217,12 @@ void(vector to) TE_BFGEXPLOD =
 	thingamabob.touch = SUB_Null;
 	setmodel (thingamabob , "progs/bfg3.spr");
 	thingamabob.solid = SOLID_NOT;
-	thingamabob.think = TE_BFGEXPLOD_THINK;
-	thingamabob.nextthink = time + 0.25;
+	thingamabob.think = TE_BFGEXPLOD1;
+	thingamabob.nextthink = time + 0.1;
 	
 	TE_BFGEXPLOD_CNT = TE_BFGEXPLOD_CNT + 1;
 };
 
-/*
-==============================================================================
-
-MULTI-DAMAGE
-
-Collects multiple small damages into a single damage
-
-==============================================================================
-*/
-
-entity	multi_ent;
-float	multi_damage;
-float multi_knock;
-
-void() ClearMultiDamage =
-{
-	multi_ent = world;
-	multi_damage = 0;
-	multi_knock = 0;
-};
-
-void(float kick) ApplyMultiDamage =
-{
-	if (!multi_ent)
-		return;
-
-	T_Damage (multi_ent, self, self, multi_damage, multi_knock);
-};
-
-void(entity hit, float damage, float  kick) AddMultiDamage =
-{
-	if (!hit)
-		return;
-	
-	if (hit != multi_ent)
-	{
-		multi_knock = 1;
-		ApplyMultiDamage (kick);
-		multi_damage = damage;
-		multi_ent = hit;
-		multi_knock = 0;
-	}
-	else
-	{
-		multi_damage = multi_damage + damage;
-		multi_knock += kick;
-	}
-};
 /*
 ==============================================================================
 
@@ -288,49 +233,10 @@ BULLETS
 
 /*
 ================
-TraceAttack
+FireLead 
 ================
 */
-
-void(float damage, vector dir, float kick) TraceAttack =
-{
-	local	vector	vel, org;
-
-	vel = normalize(dir + v_up*crandom() + v_right*crandom());
-	vel = vel + 2*trace_plane_normal;
-	vel = vel * 200;
-
-	org = trace_endpos - dir*4;
-	
-	if (trace_ent.takedamage)
-	{	
-		if (trace_ent.color)	
-			SpawnBlood (org, vel*0.2, trace_ent.color, damage*1.25);
-		else	
-			SpawnBlood (org, vel*0.2, 73, damage*1.25);
-
-		AddMultiDamage (trace_ent, damage, kick);
-	}
-	else
-	{	
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_SUPERSPIKE);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
-	}
-};
-
-
-/*
-================
-FireBullets
-
-Used by shotgun, super shotgun, and enemy soldier firing
-Go to the trouble of combining multiple pellets into a single damage call.
-================
-*/
-void(float shotcount, vector dir, vector spread, float amount, float kick) FireBullets =
+void(vector dir, vector spread, float damage, float kick, float te) FireLead =
 {
 	local	vector direction;
 	local	vector	src;
@@ -340,19 +246,44 @@ void(float shotcount, vector dir, vector spread, float amount, float kick) FireB
 	src = self.origin + v_forward*10;
 	src_z = self.absmin_z + self.size_z * 0.7;
 
-	ClearMultiDamage ();
-	while (shotcount > 0)
+	direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+
+	traceline (src, src + direction*2048, FALSE, self);
+	if (trace_fraction != 1.0)
 	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+		local	vector	vel, org;
 
-		traceline (src, src + direction*2048, FALSE, self);
-		if (trace_fraction != 1.0)
-			TraceAttack (amount, direction, kick);
+		vel = normalize(dir + v_up*crandom() + v_right*crandom());
+		vel = vel + 2*trace_plane_normal;
+		vel = vel * 200;
 
-		shotcount = shotcount - 1;
+		org = trace_endpos - dir*4;
+		
+		if (trace_ent.takedamage)
+		{	
+			if (trace_ent.color)	
+				SpawnBlood (org, vel*0.2, trace_ent.color, damage*2);
+			else	
+				SpawnBlood (org, vel*0.2, 73, damage*2);
+	
+			T_Damage (trace_ent, self, self, damage, kick);
+		}
+		else
+		{	
+			WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+			WriteByte (MSG_BROADCAST, te);
+			WriteCoord (MSG_BROADCAST, org_x);
+			WriteCoord (MSG_BROADCAST, org_y);
+			WriteCoord (MSG_BROADCAST, org_z);
+		}
 	}
 
-	ApplyMultiDamage (kick);
+};
+
+void(float shotcount, vector dir, vector spread, float amount, float kick, float te) FirePallets =
+{
+	for(float i = 0; i < shotcount; i++)
+		FireLead (dir, spread, amount, kick, te);
 };
 
 /*
@@ -371,13 +302,12 @@ void() W_FireShotgun =
 		dmg = 4;
 	
 	sound (self, CHAN_WEAPON, "weapons/guncock.wav", 1, ATTN_NORM);	
-	//stuffcmd (self, "vibrate tactile/weapons/guncock.bnvib");
 
 	self.punchangle_x = -2.5;
 	
 	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
 	dir = aim (self, 100000);
-	FireBullets (9, dir, '0.04 0.04 0', dmg, 2);
+	FirePallets (9, dir, '0.04 0.04 0', dmg, 8, TE_SHOTGUN_SHOT);
 };
 
 /*
@@ -407,8 +337,8 @@ void() W_FireSuperShotgun =
 	
 	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
 	dir = aim (self, 100000);
-	FireBullets (12, dir, '0.145 0.05 0', dmg, 5);
-	FireBullets (12, dir, '0.145 0.05 0', dmg, 5);
+	FirePallets (12, dir, '0.145 0.05 0', dmg, 12, TE_SHOTGUN_SHOT);
+	FirePallets (12, dir, '0.145 0.05 0', dmg, 12, TE_GUNSHOT);
 };
 
 /*
@@ -479,7 +409,6 @@ void() plas_cooldown1;
 
 void() W_FireChaingun =
 {
-	local float spin_speed = 0.65;
 	local vector dir = aim (self, 100000); 
 
 	if (self.ammo_nails < 1)
@@ -489,48 +418,28 @@ void() W_FireChaingun =
 		return;
 	}
 	
-	if (self.shotcount > 4 && self.button0 && self.ammo_nails > 10 - self.shotcount)
-		self.fastspin = 1;
-
-	self.shotcount += 1; 
-	
-	if (self.fastspin)
-	{
-		if (self.shotcount == 4)
-			spin_speed = 1.0;
-		if (self.shotcount == 5)
-			spin_speed = 1.25;
-		if (self.shotcount == 6)
-			spin_speed = 1.5;
-		if (self.shotcount == 7)
-			spin_speed = 1.5;
-		if (self.shotcount == 8)
-			spin_speed = 1.75;
-		if (self.shotcount > 8)
-			spin_speed = 2;
-	}
-	
 	makevectors (self.v_angle);
 
 	local float dmg;
 				
 	if(!deathmatch)
-		dmg = 14;
-	else
 		dmg = 6;
+	else
+		dmg = 3;
 
 	if (self.ammo_nails > 0)	
 	{
-		FireBullets (1, dir, '0.03 0.03 0', dmg , 2);
+		FireLead (dir, '0.05 0.05 0', dmg + 1 , 4, TE_GUNSHOT);
+		FireLead (dir, '0.03 0.03 0', dmg , 4, TE_GUNSHOT);
 		self.currentammo = self.ammo_nails = self.ammo_nails - 1;
 	}
 
 	self.punchangle_x = -3;
+
+	if (self.weaponframe > 8)
+		self.fastspin = 1;
 	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
-
-	self.attack_finished = time + (0.1/spin_speed);
-
 };
 
 void() CheckChaingunStop = 
@@ -540,14 +449,7 @@ void() CheckChaingunStop =
 
 	if (self.ammo_nails >= 1)
 		ammoleft = 1;
-
-	if (!self.button0 && !self.fastspin) 
-	{ 
-		self.shotcount = 0;
-		self.fastspin = 0;
-		self.weaponframe = 0;
-	}
-
+	
 	if ((self.fastspin && !self.button0) || !ammoleft)
 	{
 		self.shotcount = 0;
@@ -555,6 +457,14 @@ void() CheckChaingunStop =
 		player_chngstop1();
 		self.attack_finished = time + 0.8; 
 	}
+	
+	if (!self.button0 && !self.fastspin) 
+	{ 
+		self.shotcount = 0;
+		self.fastspin = 0;
+		self.weaponframe = 0;
+	}
+
 };
 
 
@@ -581,7 +491,7 @@ void() W_FireMachinegun =
 		return;
 	}	
 	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
-	FireBullets (1, dir, '0.02 0.02 0', dmg , 2);
+	FireLead (dir, '0.045 0.045 0', dmg , 2, TE_GUNSHOT);
 	
 	makevectors (self.v_angle);
 	self.punchangle_x = -2;
@@ -623,7 +533,6 @@ void()	s2_explode6	=	[5,		s2_explode7] {};
 void()	s2_explode7	=	[6,		s2_explode8] {};
 void()	s2_explode8	=	[7,		SUB_Remove] {};
 
-
 void()	s_explode1	=	[0,		s_explode2] {};
 void()	s_explode2	=	[1,		s_explode3] {};
 void()	s_explode3	=	[2,		s_explode4] {};
@@ -633,30 +542,30 @@ void()	s_explode6	=	[5,		SUB_Remove] {};
 
 void() BecomeExplosion =
 {
+	self.frame = 0;
 	self.movetype = MOVETYPE_NONE;
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
 
 	self.solid = SOLID_NOT;
-	self.nextthink = time + 0.25;
-	self.think = SUB_Remove;
+	self.nextthink = time + 0.1;
 	
 	self.angles = '0 0 0';
 
 	if (self.cnt == 1 || (self.classname == "grenade" && !(self.flags & FL_ONGROUND)))
 	{
 		setmodel (self, "progs/s_explod.spr"); 
-		s_explode1 ();
+		self.think = s_explode1;
 	}
 	else if (self.flags & FL_ONGROUND)
 	{
 		setmodel (self, "progs/s_explo1.spr"); 
-		s1_explode1 ();
+		self.think = s1_explode1;
 	}		
 	else
 	{
 		setmodel (self, "progs/s_explo2.spr");
-		s2_explode1();
+		self.think = s2_explode1;
 	}
 };
 
@@ -676,7 +585,7 @@ void() T_MissileTouch =
 	if (other.health)
 	{
 		damg = self.dmg;
-		T_Damage (other, self, self.owner, damg, 30);
+		T_Damage (other, self, self.owner, damg, damg*0.75);
 	}
 
 	// don't do radius damage to the other, because all the damage
@@ -1420,7 +1329,7 @@ void() superspike_touch =
 	else
 	{
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_SUPERSPIKE);
+		WriteByte (MSG_BROADCAST, TE_SPIKE);
 		WriteCoord (MSG_BROADCAST, self.origin_x);
 		WriteCoord (MSG_BROADCAST, self.origin_y);
 		WriteCoord (MSG_BROADCAST, self.origin_z);
@@ -1625,6 +1534,7 @@ void() W_Attack =
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
 		player_chngstart1 ();
+		self.attack_finished = time + (0.15/self.spinspeed);
 	}
 	else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
@@ -2032,7 +1942,7 @@ void() W_WeaponFrame =
 		SuperDamageSound ();
 		W_Attack ();
 	}
-	
+
 	if(self.weapon == IT_SUPER_NAILGUN)
 		CheckChaingunStop();
 	
@@ -2059,5 +1969,4 @@ void() SuperDamageSound =
 	}
 	return;
 };
-
 

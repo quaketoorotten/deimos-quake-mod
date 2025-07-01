@@ -32,7 +32,10 @@ void() monster_spawn =
 	self.nextthink = time + 0.1;
 	
 	if (self.spawnflags & SPAWN_ANGRY)	
+	{
+		SightSound();
 		FoundTarget(self);
+	}
 }
 
 void() monster_use =

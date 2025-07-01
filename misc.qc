@@ -735,9 +735,9 @@ void() breakable_explode =
 	e.origin = org;
 
 	if(self.mdl == "maps/debri.bsp")
-		sound (e, CHAN_AUTO, "world/brkglas.wav", 1, ATTN_NORM);
+		sound (e, 6, "world/brkglas.wav", 1, ATTN_NORM);
 	else
-		sound (e, CHAN_AUTO, "weapons/r_exp3.wav", 1, ATTN_NORM);	
+		sound (e, 6, "weapons/r_exp3.wav", 1, ATTN_NORM);	
 
 	remove(e);	
 	

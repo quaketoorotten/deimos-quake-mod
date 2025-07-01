@@ -421,7 +421,7 @@ void(entity attacker, float take) zombie_pain =
 {
 	local float r;
 
-	if (attacker.weapon == IT_AXE)
+	if (attacker.weapon == IT_SUPER_SHOTGUN)
 		self.max_health = self.max_health - take;	
 
 	self.health = self.max_health;		// allways reset health

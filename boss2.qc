@@ -103,7 +103,8 @@ void() CastSSG =
 	dir = en.origin - en.velocity*0.1;
 	dir = normalize (dir - org);
 	
-	FireBullets (25, dir, '0.07 0.08 0', 3, 6);
+	FirePallets (13, dir, '0.07 0.08 0', 3, 6, TE_GUNSHOT);
+	FirePallets (12, dir, '0.07 0.08 0', 3, 6, TE_SHOTGUN_SHOT);
 
 	sound (self, CHAN_VOICE, "weapons/shotgn2.wav", 1, ATTN_NORM);
 };
@@ -369,12 +370,12 @@ void() boss2_gibs =
 	ThrowHeadBoss ("progs/h_shams.mdl", -100);
 
 	for(float i = 0; i < 4; i++)
-		ThrowGibBoss ("progs/gib1_green.mdl", -400);
+		ThrowGibBoss ("progs/gib1.mdl", -400);
 
-	ThrowGibBoss ("progs/gib2_green.mdl", -400);
+	ThrowGibBoss ("progs/gib2.mdl", -400);
 
 	for(float i = 0; i < 8; i++)
-		ThrowGibBoss ("progs/gib3_green.mdl", -400);
+		ThrowGibBoss ("progs/gib3.mdl", -400);
 };
 
 
@@ -506,6 +507,12 @@ void() monster_boss2 =
 
 	spawn_boss2();
 };
+
+void() monster_cyberdemon = 
+{
+	self.classname = "monster_boss2";
+	monster_boss2 ();
+}
 
 void() spawn_boss2 =
 {
